@@ -10,4 +10,4 @@ def show_menu():
     with page3:
         st.page_link(page="pages/2_chunking.py", label="Chunking", icon="🔪", help="Learn about chunking")
     with page4:
-        st.page_link(page="pages/3_tokenization.py", label="Tokenization", icon="🔪", help="Learn about tokenization")
+        st.page_link(page="pages/3_tokenization.py", label="Tokenization", icon="✂️", help="Learn about tokenization")

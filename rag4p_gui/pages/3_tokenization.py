@@ -64,7 +64,7 @@ encoding_names = tiktoken.list_encoding_names()
 
 selected_encoding = st.selectbox(label='Choose encoding',
                                  options=encoding_names,
-                                 index=encoding_names.index('cl100k_base'))
+                                 index=encoding_names.index('o200k_base'))
 tokenizer = tiktoken.get_encoding(selected_encoding)
 vocabulary = tokenizer.token_byte_values()
 

@@ -4,7 +4,7 @@ import streamlit as st
 import tiktoken
 import streamlit_antd_components as sac
 
-from rag4p_gui.my_menu import show_menu
+from rag4p_gui.my_menu import show_menu, show_menu_indexing
 from rag4p_gui.my_sidebar import MySidebar
 from rag4p_gui.session import init_session
 
@@ -45,7 +45,8 @@ init_session()
 
 sidebar = MySidebar(embeddings=st.session_state.available_embedders)
 sidebar.add_sidebar()
-show_menu()
+
+show_menu_indexing()
 
 st.write("## Tokenization")
 with st.expander("See explanation"):

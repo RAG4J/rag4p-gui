@@ -1056,13 +1056,13 @@ sympy = "*"
 
 [[package]]
 name = "openai"
-version = "1.30.2"
+version = "1.30.3"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.30.2-py3-none-any.whl", hash = "sha256:44316818fbff3845278e862a655c4c041e93d907b04eff64629c2835f29bd58e"},
-    {file = "openai-1.30.2.tar.gz", hash = "sha256:f86780f40505de60fa389993d9b7f5564f20acfbe5efcabd5c853a12453af2b0"},
+    {file = "openai-1.30.3-py3-none-any.whl", hash = "sha256:f88119c8a848998be533c71ab8aa832446fa72b7ddbc70917c3f5886dc132051"},
+    {file = "openai-1.30.3.tar.gz", hash = "sha256:8e1bcdca2b96fe3636ab522fa153d88efde1b702d12ec32f1c73e9553ff93f45"},
 ]
 
 [package.dependencies]
@@ -1621,13 +1621,13 @@ files = [
 
 [[package]]
 name = "rag4p"
-version = "0.4.0"
+version = "0.4.1"
 description = "This project I use a lot for workshops, it contains some utils for splitters, tokenizers, and a weaviate client that I reuse a lot"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "rag4p-0.4.0-py3-none-any.whl", hash = "sha256:3dd6e205c1fb1e8030ae0b53c3513515fb9afcef55dcd89ae63ec4e397d3ca95"},
-    {file = "rag4p-0.4.0.tar.gz", hash = "sha256:e54b37c4a865a5da4bb4851ae6489ee09521ec6555abfff7351b051e389f0b91"},
+    {file = "rag4p-0.4.1-py3-none-any.whl", hash = "sha256:b1df20f80547dcaf88b26a83fa57729124fa050302cc4cdee9bb2559679b7993"},
+    {file = "rag4p-0.4.1.tar.gz", hash = "sha256:7bbfdfcd0a73782ace6fa23ce690a0462da8143697cb90f3b636f03dcc8cb9b8"},
 ]
 
 [package.dependencies]
@@ -2432,4 +2432,4 @@ validators = "0.28.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2fbba268e275ec08a2d48789317080d606e376b914ee60681e6f2578db3ccbca"
+content-hash = "510aacf777a043e9c87dca8309dd0b1905d467a0df9d963d1a7391b06a57946e"

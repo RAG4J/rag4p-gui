@@ -1621,13 +1621,13 @@ files = [
 
 [[package]]
 name = "rag4p"
-version = "0.4.1"
+version = "0.5.2"
 description = "This project I use a lot for workshops, it contains some utils for splitters, tokenizers, and a weaviate client that I reuse a lot"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "rag4p-0.4.1-py3-none-any.whl", hash = "sha256:b1df20f80547dcaf88b26a83fa57729124fa050302cc4cdee9bb2559679b7993"},
-    {file = "rag4p-0.4.1.tar.gz", hash = "sha256:7bbfdfcd0a73782ace6fa23ce690a0462da8143697cb90f3b636f03dcc8cb9b8"},
+    {file = "rag4p-0.5.2-py3-none-any.whl", hash = "sha256:f7b525115b4a39b88fd1303e773ed3eb9561106990a93c3871b0f27301911d9e"},
+    {file = "rag4p-0.5.2.tar.gz", hash = "sha256:34674abd4c3f0a86ee70b3ebd9a603e92e0382dab291b2954e470d9171d222d1"},
 ]
 
 [package.dependencies]
@@ -2432,4 +2432,4 @@ validators = "0.28.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "510aacf777a043e9c87dca8309dd0b1905d467a0df9d963d1a7391b06a57946e"
+content-hash = "250524e5aabce0e6cde5d0c3edaf16e67939525f7413b657ff6ecf69c6e9ecb1"

@@ -1,0 +1,14 @@
+{
+  "available": [
+    {
+      "name": "Luminis Wordpress All",
+      "path": "luminis_wp",
+      "file": "all_luminis_wp.jsonl"
+    },
+    {
+      "name": "Luminis Wordpress Few",
+      "path": "luminis_wp",
+      "file": "few_luminis_wp.jsonl"
+    }
+  ]
+}

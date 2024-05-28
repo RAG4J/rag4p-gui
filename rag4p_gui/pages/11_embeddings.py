@@ -1,15 +1,10 @@
 import streamlit as st
 from dotenv import load_dotenv
-from rag4p.integrations.ollama.access_ollama import AccessOllama
-from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
-from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 from rag4p.util.key_loader import KeyLoader
 
-from rag4p_gui.my_menu import show_menu, show_menu_indexing
+from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.my_sidebar import MySidebar
 from rag4p_gui.session import init_session
-from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
-
 from rag4p_gui.util.embedding import create_embedder
 
 load_dotenv()

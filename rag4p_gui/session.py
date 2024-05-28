@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM
+from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA
+from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
+from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 
 KEY_AVAILABLE_EMBEDDERS = 'available_embedders'
 KEY_SELECTED_EMBEDDER = 'selected_embedder'
@@ -15,8 +18,8 @@ KEY_AVAILABLE_SPLITTERS = 'available_splitters'
 def init_session():
     if KEY_AVAILABLE_EMBEDDERS not in st.session_state:
         st.session_state.available_embedders = pd.DataFrame({
-            'embedder': ['OpenAI', 'Ollama', 'Local'],
-            'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM], ['Default']]
+            'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), OnnxEmbedder.supplier()],
+            'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM], ['MiniLM']]
         })
 
     embeddings = st.session_state.available_embedders

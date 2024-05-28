@@ -1,6 +1,7 @@
 import streamlit as st
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 
+from rag4p_gui.containers import info_content_store
 from rag4p_gui.my_menu import show_menu
 from rag4p_gui.my_sidebar import MySidebar
 from rag4p_gui.session import init_session
@@ -46,10 +47,13 @@ show_menu()
 st.write("## Retrieving")
 st.markdown("When using the internal content store, you can use the session state to obtain the store.")
 
+
 check_content_store_embedding_model()
 
 content_store = st.session_state.content_store
 strategy = WindowRetrievalStrategy(retriever=content_store, window_size=1)
+
+info_content_store(st.container())
 
 st.text_input(label='Query for', key='text_to_find')
 

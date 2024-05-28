@@ -15,9 +15,6 @@ from rag4p_gui.util.splitter import create_splitter
 
 load_dotenv()
 
-content_store = None
-content_store_lock = Lock()
-
 
 async def load_internal_content_store(splitter_name: str, embedder_name: str, embedding_model: str, chunk_size: int):
     try:
@@ -39,26 +36,25 @@ async def load_internal_content_store(splitter_name: str, embedder_name: str, em
 async def initialize_content_store():
     result_container.info('Loading content store...')
 
-    async with content_store_lock:
-        if 'content_store' not in st.session_state:
-            result_container.info('About to load the content store...')
-            _content_store, message = await load_internal_content_store(
-                splitter_name=st.session_state.selected_splitter,
-                embedder_name=st.session_state.selected_embedder,
-                embedding_model=st.session_state.selected_embedding_model,
-                chunk_size=st.session_state.chunk_size
-            )
-            result_container.info(message)
-    return content_store
+    if 'content_store' not in st.session_state:
+        _content_store, message = await load_internal_content_store(
+            splitter_name=st.session_state.selected_splitter,
+            embedder_name=st.session_state.selected_embedder,
+            embedding_model=st.session_state.selected_embedding_model,
+            chunk_size=st.session_state.chunk_size
+        )
+        st.session_state.content_store = _content_store
+        st.session_state.content_store_initialized = True
+        st.session_state.content_store_embedding_model = st.session_state.selected_embedding_model
+        result_container.info(message)
 
 
-async def load_content_store():
-    st.session_state.content_store = await initialize_content_store()
-    st.session_state.content_store_initialized = True
+def load_content_store():
+    asyncio.run(initialize_content_store())
 
 
 def info_content_store():
-    if 'content_store' in st.session_state:
+    if 'content_store' in st.session_state and st.session_state.content_store is not None:
         num_chunks = 0
         for chunk in st.session_state.content_store.loop_over_chunks():
             num_chunks += 1
@@ -69,7 +65,6 @@ def info_content_store():
 
 if 'content_store_initialized' not in st.session_state:
     st.session_state.content_store_initialized = False
-
 
 st.set_page_config(page_title='RAG4P GUI ~ Indexing', page_icon='🧠', layout='wide')
 init_session()
@@ -90,7 +85,7 @@ With the choice of a retrieval system, you must choose the dataset to use.
 result_container = st.container()
 if st.button("Initialize Content Store"):
     if not st.session_state.content_store_initialized:
-        asyncio.run(load_content_store())
+        load_content_store()
     else:
         st.warning("Content store is already initialized!")
 

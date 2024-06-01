@@ -20,12 +20,9 @@ def create_splitter(splitter_name: str, **kwargs):
         splitter = SentenceSplitter()
     elif splitter_name == 'max size':
         chunk_size = kwargs.get('chunk_size', 512)
-        model = kwargs.get('embedding_model', DEFAULT_EMBEDDING_MODEL)
-        try:
-            tiktoken.encoding_for_model(model_name=model)
-        except KeyError as e:
-            raise ValueError(f'Unknown model for tiktoken: {model}') from e
-        splitter = MaxTokenSplitter(max_tokens=chunk_size, model=model)
+        model = kwargs.get('embedding_model')
+        provider = kwargs.get('provider')
+        splitter = MaxTokenSplitter(max_tokens=chunk_size, provider=provider, model=model)
     elif splitter_name == 'single chunk':
         splitter = SingleChunkSplitter()
     else:

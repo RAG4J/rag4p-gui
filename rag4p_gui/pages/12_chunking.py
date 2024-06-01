@@ -3,15 +3,16 @@ from rag4p.indexing.input_document import InputDocument
 
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.my_sidebar import MySidebar
-from rag4p_gui.session import init_session
+from rag4p_gui.session import init_session, KEY_SELECTED_SPLITTER, KEY_SELECTED_EMBEDDING_MODEL, KEY_CHUNK_SIZE, \
+    KEY_SELECTED_EMBEDDER
 from rag4p_gui.util.splitter import create_splitter
 
 
 def chunk_document():
-    message, splitter = create_splitter(splitter_name=st.session_state.selected_splitter,
-                                        embedding_model=st.session_state.selected_embedding_model,
-                                        chunk_size=st.session_state.chunk_size)
-    result_container.info(message)
+    splitter = create_splitter(splitter_name=st.session_state[KEY_SELECTED_SPLITTER],
+                               provider=st.session_state[KEY_SELECTED_EMBEDDER].lower(),
+                               embedding_model=st.session_state[KEY_SELECTED_EMBEDDING_MODEL],
+                               chunk_size=st.session_state[KEY_CHUNK_SIZE])
 
     chunks = splitter.split(input_document=InputDocument(document_id='1',
                                                          text=st.session_state.get('input_document'),

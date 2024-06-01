@@ -19,7 +19,7 @@ from rag4p_gui.util.splitter import create_splitter
 async def load_internal_content_store(content_reader: ContentReader, splitter_name: str, embedder_name: str,
                                       embedding_model: str, **kwargs) -> InternalContentStore:
     """
-    Load the internal content store from the provided content reader.
+    Create a new ContentStore that is initialized with the provided content reader, embedder and splitter.
     :param content_reader: The content reader to read the content from.
     :param splitter_name: The splitter to split the content into chunks.
     :param embedder_name: The embedder provider using the model provided.

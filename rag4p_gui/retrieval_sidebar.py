@@ -4,10 +4,11 @@ from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentR
 from rag4p.rag.retrieval.strategies.topn_retrieval_strategy import TopNRetrievalStrategy
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 
-from rag4p_gui.session import KEY_SELECTED_STRATEGY, KEY_WINDOW_SIZE
+from rag4p_gui.session import KEY_SELECTED_STRATEGY, KEY_WINDOW_SIZE, KEY_AMOUNT_OF_CHUNKS
 
 LKEY_SELECTED_STRATEGY = '_' + KEY_SELECTED_STRATEGY
 LKEY_WINDOW_SIZE = '_' + KEY_WINDOW_SIZE
+LKEY_AMOUNT_OF_CHUNKS = '_' + KEY_AMOUNT_OF_CHUNKS
 KEY_RETRIEVAL_STRATEGY = 'retrieval_strategy'
 
 
@@ -39,9 +40,23 @@ class RetrievalSidebar:
             raise ValueError(f"Unsupported retrieval strategy: {st.session_state.selected_retrieval_strategy}")
         st.session_state[KEY_RETRIEVAL_STRATEGY] = strategy
 
+    @staticmethod
+    def store_amount_of_chunks():
+        st.session_state[KEY_AMOUNT_OF_CHUNKS] = st.session_state.get(LKEY_AMOUNT_OF_CHUNKS)
+
     def add_sidebar(self):
         with st.sidebar:
             st.title('Configure')
+            with st.container(border=True):
+                st.write('Configure the amount of chunks to return.')
+                st.number_input(label='Amount of chunks',
+                                min_value=1,
+                                key=LKEY_AMOUNT_OF_CHUNKS,
+                                on_change=self.store_amount_of_chunks,
+                                step=1,
+                                format='%d')
+
+
             with st.container(border=True):
                 st.write('Configure the retrieval strategy to use.')
                 st.selectbox(label='Choose strategy',

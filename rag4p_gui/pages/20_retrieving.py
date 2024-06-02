@@ -4,7 +4,7 @@ import streamlit_antd_components as sac
 from rag4p_gui.containers import info_content_store
 from rag4p_gui.my_menu import show_menu
 from rag4p_gui.retrieval_sidebar import RetrievalSidebar, KEY_RETRIEVAL_STRATEGY
-from rag4p_gui.session import init_session, KEY_SELECTED_STRATEGY, KEY_WINDOW_SIZE
+from rag4p_gui.session import init_session, KEY_AMOUNT_OF_CHUNKS
 
 
 def retrieve_chunks():
@@ -18,7 +18,7 @@ def retrieve_chunks():
 def retrieve_chunks_with_strategy():
     strategy = st.session_state[KEY_RETRIEVAL_STRATEGY]
     text_to_find = st.session_state.text_to_find
-    retrieval_output = strategy.retrieve_max_results(text_to_find, 2)
+    retrieval_output = strategy.retrieve_max_results(text_to_find, st.session_state[KEY_AMOUNT_OF_CHUNKS])
 
     with result_container:
         st.write(f"Found {len(retrieval_output.items)} relevant chunks")

@@ -23,6 +23,7 @@ KEY_AVAILABLE_SPLITTERS = 'available_splitters'
 KEY_AVAILABLE_STRATEGIES = 'available_strategies'
 KEY_SELECTED_STRATEGY = 'selected_strategy'
 KEY_WINDOW_SIZE = 'window_size'
+KEY_AMOUNT_OF_CHUNKS = 'amount_of_chunks'
 
 
 def init_session():
@@ -55,3 +56,6 @@ def init_session():
     if KEY_SELECTED_STRATEGY not in st.session_state:
         st.session_state[KEY_SELECTED_STRATEGY] = st.session_state.available_strategies[0]
         st.session_state[KEY_WINDOW_SIZE] = 1
+
+    if KEY_AMOUNT_OF_CHUNKS not in st.session_state:
+        st.session_state[KEY_AMOUNT_OF_CHUNKS] = 2

@@ -8,6 +8,7 @@ from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p_gui.containers import info_content_store
 from rag4p_gui.data.data_sets import load_internal_content_store, available_content_stores, available_data_files, \
     content_store_metadata_from_backup
+from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.indexing_sidebar import IndexingSidebar
@@ -19,16 +20,24 @@ load_dotenv()
 
 async def initialize_content_store():
     dataset = st.session_state.selected_data_file
-    # TODO What if we have another reader?
-    # wordpress_path = os.path.join(dataset['path'], dataset['file'])
+
     kwargs = {
         'provider': st.session_state.selected_embedder.lower(),
     }
     kwargs.update(**dataset)
     if st.session_state.selected_splitter == MaxTokenSplitter.name():
         kwargs['chunk_size'] = st.session_state.chunk_size
+
+    data_path = str(os.path.join(dataset['path'], dataset['file']))
+    if dataset['reader'] == WordpressJsonlReader.__name__:
+        reader = WordpressJsonlReader(file_name=data_path)
+    elif dataset['reader'] == TeqnationJsonlReader.__name__:
+        reader = TeqnationJsonlReader(file_name=data_path)
+    else:
+        raise ValueError(f"Unknown reader {dataset['reader']}")
+
     _content_store = await load_internal_content_store(
-        content_reader=WordpressJsonlReader(file_name=f"{dataset['path']}/{dataset['file']}"),
+        content_reader=reader,
         splitter_name=st.session_state.selected_splitter,
         embedder_name=st.session_state.selected_embedder,
         embedding_model=st.session_state.selected_embedding_model,

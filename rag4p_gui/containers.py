@@ -30,7 +30,7 @@ def info_content_store(st_container):
             )
         with col2:
             for key in metadata.keys():
-                if key not in ['create_date', 'supplier', 'model', 'splitter', 'embedder', 'name']:
+                if key not in ['create_date', 'supplier', 'model', 'splitter', 'embedder', 'embedding_model', 'name']:
                     st.markdown(f"*{key}*: **{metadata[key]}**")
 
     else:

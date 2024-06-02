@@ -3,12 +3,20 @@
     {
       "name": "Luminis Wordpress All",
       "path": "luminis_wp",
-      "file": "all_luminis_wp.jsonl"
+      "file": "all_luminis_wp.jsonl",
+      "reader": "WordpressJsonlReader"
     },
     {
       "name": "Luminis Wordpress Few",
       "path": "luminis_wp",
-      "file": "few_luminis_wp.jsonl"
+      "file": "few_luminis_wp.jsonl",
+      "reader": "WordpressJsonlReader"
+    },
+    {
+      "name": "Teqnation sessions",
+      "path": "teqnation",
+      "file": "sessions.jsonl",
+      "reader": "TeqnationJsonlReader"
     }
   ]
 }

@@ -2,8 +2,8 @@ import streamlit as st
 from dotenv import load_dotenv
 from rag4p.util.key_loader import KeyLoader
 
+from rag4p_gui.indexing_sidebar import IndexingSidebar
 from rag4p_gui.my_menu import show_menu_indexing
-from rag4p_gui.my_sidebar import MySidebar
 from rag4p_gui.session import init_session
 from rag4p_gui.util.embedding import create_embedder
 
@@ -27,7 +27,7 @@ def embed_document():
 st.set_page_config(page_title='RAG4P GUI ~ Embeddings', page_icon='🧠', layout='wide')
 init_session()
 
-sidebar = MySidebar(embeddings=st.session_state.available_embedders)
+sidebar = IndexingSidebar(embeddings=st.session_state.available_embedders)
 sidebar.add_sidebar()
 show_menu_indexing()
 

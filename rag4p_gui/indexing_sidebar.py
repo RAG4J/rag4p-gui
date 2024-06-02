@@ -11,7 +11,7 @@ LKEY_SELECTED_SPLITTER = '_' + KEY_SELECTED_SPLITTER
 LKEY_CHUNK_SIZE = '_' + KEY_CHUNK_SIZE
 
 
-class MySidebar():
+class IndexingSidebar:
 
     def __init__(self, embeddings: pd.DataFrame):
         self.embeddings = embeddings
@@ -63,4 +63,4 @@ class MySidebar():
                                 on_change=self.store_chunk_size,
                                 min_value=1,
                                 step=1,
-                                disabled=True if st.session_state[LKEY_SELECTED_SPLITTER] != MaxTokenSplitter.name() else False)
+                                disabled=st.session_state[LKEY_SELECTED_SPLITTER] != MaxTokenSplitter.name())

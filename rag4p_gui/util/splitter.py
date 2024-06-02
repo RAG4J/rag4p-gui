@@ -15,15 +15,14 @@ def create_splitter(splitter_name: str, **kwargs):
     :param kwargs: Optional arguments to pass to the splitter.
     :return:
     """
-
-    if splitter_name == 'sentence':
+    if splitter_name == SentenceSplitter.name():
         splitter = SentenceSplitter()
-    elif splitter_name == 'max size':
+    elif splitter_name == MaxTokenSplitter.name():
         chunk_size = kwargs.get('chunk_size', 512)
         model = kwargs.get('embedding_model')
         provider = kwargs.get('provider')
         splitter = MaxTokenSplitter(max_tokens=chunk_size, provider=provider, model=model)
-    elif splitter_name == 'single chunk':
+    elif splitter_name == SingleChunkSplitter.name():
         splitter = SingleChunkSplitter()
     else:
         # TODO check if we can add some central logging system or something similar

@@ -11,9 +11,9 @@ from rag4p_gui.data.data_sets import load_internal_content_store, available_cont
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.my_sidebar import MySidebar
-from rag4p_gui.session import init_session
+from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDER
 from rag4p_gui.util.embedding import create_embedder
-
+from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 load_dotenv()
 
 
@@ -21,12 +21,18 @@ async def initialize_content_store():
     dataset = st.session_state.selected_data_file
     # TODO What if we have another reader?
     # wordpress_path = os.path.join(dataset['path'], dataset['file'])
+    kwargs = {
+        'provider': st.session_state.selected_embedder.lower(),
+    }
+    kwargs.update(**dataset)
+    if st.session_state.selected_splitter == MaxTokenSplitter.name():
+        kwargs['chunk_size'] = st.session_state.chunk_size
     _content_store = await load_internal_content_store(
         content_reader=WordpressJsonlReader(file_name=f"{dataset['path']}/{dataset['file']}"),
         splitter_name=st.session_state.selected_splitter,
         embedder_name=st.session_state.selected_embedder,
         embedding_model=st.session_state.selected_embedding_model,
-        chunk_size=st.session_state.chunk_size
+        **kwargs
     )
     st.session_state.content_store = _content_store
     st.session_state.content_store_initialized = True
@@ -50,24 +56,6 @@ def load_content_store_from_backup():
         path=normalized_path)
     st.session_state.content_store = _content_store
     st.session_state.content_store_initialized = True
-
-
-# def info_content_store(st_container):
-#     if 'content_store' in st.session_state and st.session_state.content_store is not None:
-#         num_chunks = 0
-#         for chunk in st.session_state.content_store.loop_over_chunks():
-#             num_chunks += 1
-#         metadata = st.session_state.content_store.get_metadata()
-#         st_container.markdown(
-#             f"""
-#             *Number of chunks*: **{num_chunks}**
-#
-#             *Embedder*: **{metadata["supplier"]}**
-#
-#             *Embedding model*: **{metadata["model"]}**
-#         """)
-#     else:
-#         st_container.info('No content found, while it should be there.')
 
 
 st.set_page_config(page_title='RAG4P GUI ~ Indexing', page_icon='🧠', layout='wide')
@@ -103,9 +91,19 @@ with column2:
     if st.button("Load Content Store backup"):
         load_content_store_from_backup()
 
-sac.divider(label="Show information about the loaded content store:")
 result_container = st.container()
 if st.session_state.get("content_store_initialized"):
     info_content_store(result_container)
 else:
     result_container.write("Content store not initialized or still initializing")
+
+sac.divider(label="Create a backup of the content store")
+if (st.session_state.get("content_store_initialized")) and 'backup_file' not in st.session_state.content_store._metadata:
+    st.write(f"Create a backup of the current content store loaded from {st.session_state.selected_data_file['name']}")
+    file_name = (st.session_state.selected_data_file['name'].replace(" ", "_").lower() + "_"
+                 + st.session_state[KEY_SELECTED_EMBEDDER].lower())
+    st.text_input("Enter Backup name", key="backup_name", value=f"{file_name}")
+    if st.button("Create backup"):
+        st.session_state.content_store._metadata['name'] = st.session_state.backup_name
+        st.session_state.content_store._metadata['backup_file'] = f"data_backups/{st.session_state.backup_name}"
+        st.session_state.content_store.backup(f"data_backups/{st.session_state.backup_name}")

@@ -29,9 +29,14 @@ async def load_internal_content_store(content_reader: ContentReader, splitter_na
     """
     kwargs['embedding_model'] = embedding_model
 
+    splitter = create_splitter(splitter_name=splitter_name, **kwargs)
     embedder = create_embedder(embedder_name=embedder_name, model_name=embedding_model)
-    internal_content_store = InternalContentStore(embedder=embedder)
-    splitter = create_splitter(splitter_name=splitter_name, kwargs=kwargs)
+    meta = {
+        'splitter': splitter.name(),
+    }
+    if kwargs:
+        meta.update(kwargs)
+    internal_content_store = InternalContentStore(embedder=embedder, metadata=meta)
     indexing_service = IndexingService(content_store=internal_content_store)
 
     indexing_service.index_documents(content_reader=content_reader, splitter=splitter)

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 
+from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p_gui.session import KEY_SELECTED_EMBEDDER, KEY_SELECTED_EMBEDDING_MODEL, KEY_SELECTED_SPLITTER, \
     KEY_CHUNK_SIZE, KEY_AVAILABLE_SPLITTERS
 
@@ -62,4 +63,4 @@ class MySidebar():
                                 on_change=self.store_chunk_size,
                                 min_value=1,
                                 step=1,
-                                disabled=True if st.session_state[LKEY_SELECTED_SPLITTER] != 'max size' else False)
+                                disabled=True if st.session_state[LKEY_SELECTED_SPLITTER] != MaxTokenSplitter.name() else False)

@@ -5,6 +5,9 @@ from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
+from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
+from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
+from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
 
 KEY_AVAILABLE_EMBEDDERS = 'available_embedders'
 KEY_SELECTED_EMBEDDER = 'selected_embedder'
@@ -28,8 +31,8 @@ def init_session():
         st.session_state[KEY_SELECTED_EMBEDDING_MODEL] = embeddings['model'][0][0]
 
     if KEY_AVAILABLE_SPLITTERS not in st.session_state:
-        st.session_state.available_splitters = ['sentence', 'max size', 'single chunk']
+        st.session_state.available_splitters = [SentenceSplitter.name(), MaxTokenSplitter.name(), SingleChunkSplitter.name()]
 
     if KEY_SELECTED_SPLITTER not in st.session_state:
-        st.session_state[KEY_SELECTED_SPLITTER] = 'sentence'
+        st.session_state[KEY_SELECTED_SPLITTER] = st.session_state.available_splitters[0]
         st.session_state[KEY_CHUNK_SIZE] = 512

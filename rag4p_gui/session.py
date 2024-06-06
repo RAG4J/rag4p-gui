@@ -12,6 +12,8 @@ from rag4p.rag.retrieval.strategies.topn_retrieval_strategy import TopNRetrieval
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
 
+from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
+
 KEY_AVAILABLE_EMBEDDERS = 'available_embedders'
 KEY_SELECTED_EMBEDDER = 'selected_embedder'
 KEY_SELECTED_EMBEDDING_MODEL = 'selected_embedding_model'
@@ -21,9 +23,6 @@ KEY_CHUNK_SIZE = 'chunk_size'
 KEY_AVAILABLE_SPLITTERS = 'available_splitters'
 
 KEY_AVAILABLE_STRATEGIES = 'available_strategies'
-KEY_SELECTED_STRATEGY = 'selected_strategy'
-KEY_WINDOW_SIZE = 'window_size'
-KEY_AMOUNT_OF_CHUNKS = 'amount_of_chunks'
 
 
 def init_session():
@@ -47,15 +46,14 @@ def init_session():
         st.session_state[KEY_CHUNK_SIZE] = 512
 
     if KEY_AVAILABLE_STRATEGIES not in st.session_state:
-        st.session_state.available_strategies = [
+        st.session_state[KEY_AVAILABLE_STRATEGIES] = [
             TopNRetrievalStrategy.__name__,
             WindowRetrievalStrategy.__name__,
             DocumentRetrievalStrategy.__name__
         ]
 
-    if KEY_SELECTED_STRATEGY not in st.session_state:
-        st.session_state[KEY_SELECTED_STRATEGY] = st.session_state.available_strategies[0]
-        st.session_state[KEY_WINDOW_SIZE] = 1
+    if not st.session_state.get('content_store_initialized'):
+        st.session_state.content_store_initialized = False
 
     if KEY_AMOUNT_OF_CHUNKS not in st.session_state:
         st.session_state[KEY_AMOUNT_OF_CHUNKS] = 2

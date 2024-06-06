@@ -25,3 +25,9 @@ if st.session_state.get('selected_embedder'):
     - Embedding model: '_{st.session_state.selected_embedding_model}_'.
     """)
 
+if 'jettro' not in st.session_state:
+    st.session_state['jettro'] = 0
+
+st.session_state['jettro'] = st.session_state['jettro'] + 1
+
+st.write(f"Jettro: {st.session_state['jettro']}")

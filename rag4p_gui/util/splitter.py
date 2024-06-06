@@ -21,6 +21,9 @@ def create_splitter(splitter_name: str, **kwargs):
         chunk_size = kwargs.get('chunk_size', 512)
         model = kwargs.get('embedding_model')
         provider = kwargs.get('provider')
+
+        print(kwargs)
+
         splitter = MaxTokenSplitter(max_tokens=chunk_size, provider=provider, model=model)
     elif splitter_name == SingleChunkSplitter.name():
         splitter = SingleChunkSplitter()

@@ -1,20 +1,29 @@
 import asyncio
 import os
-import streamlit_antd_components as sac
-import streamlit as st
-from dotenv import load_dotenv
-from rag4p.rag.store.local.internal_content_store import InternalContentStore
 
+import streamlit as st
+import streamlit_antd_components as sac
+from dotenv import load_dotenv
+from rag4p.indexing.indexing_service import IndexingService
+from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
+from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
+from rag4p.integrations.weaviate.weaviate_content_store import WeaviateContentStore
+from rag4p.integrations.weaviate.chunk_collection import weaviate_properties
+
+from rag4p_gui.components.select_content_store import create_content_store_selection
+from rag4p_gui.components.select_weaviate_collection import create_weaviate_collection_selection
 from rag4p_gui.containers import info_content_store
-from rag4p_gui.data.data_sets import load_internal_content_store, available_content_stores, available_data_files, \
-    content_store_metadata_from_backup
+from rag4p_gui.data.data_sets import load_internal_content_store, available_data_files
 from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
-from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.indexing_sidebar import IndexingSidebar
+from rag4p_gui.integrations.weaviate import luminis, teqnation
+from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDER
 from rag4p_gui.util.embedding import create_embedder
-from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
+from rag4p_gui.util.splitter import create_splitter
+
 load_dotenv()
 
 
@@ -48,23 +57,43 @@ async def initialize_content_store():
     st.session_state.content_store_embedding_model = st.session_state.selected_embedding_model
 
 
-def load_content_store():
-    asyncio.run(initialize_content_store())
+async def initialize_weaviate_content_store():
+    if st.session_state.selected_embedder != OpenAIEmbedder.supplier():
+        raise ValueError(f"Embedder {st.session_state.selected_embedder} not supported for Weaviate")
 
+    dataset = st.session_state.selected_data_file
 
-def load_content_store_from_backup():
-    backup_path = f"../../data_backups/{st.session_state.selected_content_store}"
+    kwargs = {
+        'provider': st.session_state.selected_embedder.lower(),
+    }
+    kwargs.update(**dataset)
+    if st.session_state.selected_splitter == MaxTokenSplitter.name():
+        kwargs['chunk_size'] = st.session_state.chunk_size
 
-    current_script_path = os.path.dirname(os.path.realpath(__file__))
-    combined_path = os.path.join(current_script_path, backup_path)
-    normalized_path = os.path.normpath(combined_path)
+    data_path = str(os.path.join(dataset['path'], dataset['file']))
+    if dataset['reader'] == WordpressJsonlReader.__name__:
+        reader = WordpressJsonlReader(file_name=data_path)
+        additional_properties = luminis.additional_properties
+    elif dataset['reader'] == TeqnationJsonlReader.__name__:
+        reader = TeqnationJsonlReader(file_name=data_path)
+        additional_properties = teqnation.additional_properties
+    else:
+        raise ValueError(f"Unknown reader {dataset['reader']}")
 
-    metadata = content_store_metadata_from_backup(backup_path)
-    _content_store = InternalContentStore.load_from_backup(
-        embedder=create_embedder(embedder_name=metadata['supplier'], model_name=metadata['model']),
-        path=normalized_path)
-    st.session_state.content_store = _content_store
-    st.session_state.content_store_initialized = True
+    kwargs['embedding_model'] = st.session_state.selected_embedding_model
+
+    _collection_name = st.session_state.new_collection_name
+    _embedder = create_embedder(embedder_name=st.session_state.selected_embedder,
+                                model_name=st.session_state.selected_embedding_model)
+    _splitter = create_splitter(splitter_name=st.session_state.selected_splitter, **kwargs)
+    _content_store = WeaviateContentStore(weaviate_access=get_weaviate_access(),
+                                          embedder=_embedder,
+                                          collection_name=_collection_name)
+    get_weaviate_access().force_create_collection(collection_name=_collection_name,
+                                                  properties=weaviate_properties(additional_properties))
+    indexing_service = IndexingService(content_store=_content_store)
+    response = indexing_service.index_documents(content_reader=reader, splitter=_splitter)
+    print(response)
 
 
 st.set_page_config(page_title='RAG4P GUI ~ Indexing', page_icon='🧠', layout='wide')
@@ -85,7 +114,7 @@ embedder and embedding model. You can also load a backup of a content store.
 """)
 
 datasets = available_data_files()
-stores = available_content_stores()
+
 
 column1, column2 = st.columns(2)
 with column1:
@@ -96,9 +125,9 @@ with column1:
         asyncio.run(initialize_content_store())
 
 with column2:
-    st.selectbox('Select a Content Store backup', stores, key='selected_content_store')
-    if st.button("Load Content Store backup"):
-        load_content_store_from_backup()
+    st.text_input("Enter a new collection name", key="new_collection_name")
+    if st.button("Initialize Weaviate Content Store"):
+        asyncio.run(initialize_weaviate_content_store())
 
 result_container = st.container()
 if st.session_state.get("content_store_initialized"):
@@ -107,12 +136,23 @@ else:
     result_container.write("Content store not initialized or still initializing")
 
 sac.divider(label="Create a backup of the content store")
-if (st.session_state.get("content_store_initialized")) and 'backup_file' not in st.session_state.content_store._metadata:
-    st.write(f"Create a backup of the current content store loaded from {st.session_state.selected_data_file['name']}")
-    file_name = (st.session_state.selected_data_file['name'].replace(" ", "_").lower() + "_"
-                 + st.session_state[KEY_SELECTED_EMBEDDER].lower())
-    st.text_input("Enter Backup name", key="backup_name", value=f"{file_name}")
-    if st.button("Create backup"):
-        st.session_state.content_store._metadata['name'] = st.session_state.backup_name
-        st.session_state.content_store._metadata['backup_file'] = f"data_backups/{st.session_state.backup_name}"
-        st.session_state.content_store.backup(f"data_backups/{st.session_state.backup_name}")
+if st.session_state.get("content_store_initialized"):
+    meta = st.session_state.content_store.get_metadata()
+    if 'backup_file' not in meta:
+        st.write(
+            f"Create a backup of the current content store loaded from {st.session_state.selected_data_file['name']}")
+        file_name = (st.session_state.selected_data_file['name'].replace(" ", "_").lower() + "_"
+                     + st.session_state[KEY_SELECTED_EMBEDDER].lower())
+        st.text_input("Enter Backup name", key="backup_name", value=f"{file_name}")
+        if st.button("Create backup"):
+            st.session_state.content_store.add_metadata('name', st.session_state.backup_name)
+            st.session_state.content_store.add_metadata('backup_file', f"data_backups/{st.session_state.backup_name}")
+            st.session_state.content_store.backup(f"data_backups/{st.session_state.backup_name}")
+
+sac.divider(label="Show available content stores")
+
+column1, column2 = st.columns(2)
+with column1:
+    create_content_store_selection()
+with column2:
+    create_weaviate_collection_selection()

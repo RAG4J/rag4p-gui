@@ -25,7 +25,7 @@ class WordpressJsonlReader(JsonlContentReader):
             "post_id": data['post_id'],
             "title": data['title'],
             "url": data['url'],
-            "updated_at": data['updated_at'],
+            "updated_at": data['updated_at'] + '+02:00',
             "tags": data['tags'],
             "categories": data['categories']
         }

@@ -57,12 +57,18 @@ with st.expander("Show content store details"):
         if st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_INTERNAL:
             info_content_store(st.container())
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_WEAVIATE:
-            # TODO replace with info from access object
-            meta = get_weaviate_access().client.get_meta()
+            # TODO replace with info from access object FIX THE CURRENT
+            meta = get_weaviate_access().obtain_meta()
             collection_ = st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION]
-            if get_weaviate_access().does_collection_exist(collection_):
-                meta["collection"] = get_weaviate_access().client.collections.export_config(name=collection_)
-            st.write(meta)
+            schema = get_weaviate_access().client.collections.export_config(name=collection_)
+            st.markdown(f"""Collection: {collection_}  
+            schema: {schema.name}
+            """)
+            for prop in schema.properties:
+                st.markdown(f"Property: {prop.name}, type: {prop.data_type}")
+            # TODO use for additional fields
+            st.write(f"Vectorizer: {schema.vectorizer_config.model['model']}")
+            st.write(schema)
         else:
             st.error("Unknown retriever")
 

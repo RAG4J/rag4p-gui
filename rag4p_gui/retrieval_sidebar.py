@@ -53,11 +53,13 @@ class RetrievalSidebar:
             content_store = st.session_state.content_store
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_WEAVIATE:
             embedder = create_embedder(OpenAIEmbedder.supplier(), DEFAULT_EMBEDDING_MODEL)
+            collection_name = st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION]
+            additional_properties = RetrievalSidebar.find_additional_properties(collection_name)
             content_store = WeaviateRetriever(get_weaviate_access(),
                                               embedder=embedder,
-                                              additional_properties=['title'],
+                                              additional_properties=additional_properties,
                                               hybrid=True,
-                                              collection_name=st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION])
+                                              collection_name=collection_name)
         else:
             raise ValueError(f"Unsupported retriever: {st.session_state[KEY_CHOSEN_RETRIEVER]}")
 
@@ -71,3 +73,8 @@ class RetrievalSidebar:
         else:
             raise ValueError(f"Unsupported retrieval strategy: {st.session_state.selected_retrieval_strategy}")
         st.session_state[KEY_RETRIEVAL_STRATEGY] = strategy
+
+    @staticmethod
+    def find_additional_properties(collection_name: str):
+        schema = get_weaviate_access().client.collections.export_config(name=collection_name)
+        return [prop.name for prop in schema.properties if prop.index_searchable]  # TODO where index is searchable

@@ -8,7 +8,7 @@ from rag4p.integrations.ollama.ollama_tokenizer import tokenizer_for_model
 from rag4p.integrations.openai import PROVIDER as OPENAI_PROVIDER
 from tokenizers import Tokenizer
 
-from rag4p_gui.indexing_sidebar import IndexingSidebar
+from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDER, KEY_SELECTED_EMBEDDING_MODEL
 
@@ -119,9 +119,7 @@ st.set_page_config(page_title='RAG4P GUI ~ Tokenization', page_icon='🔪', layo
 
 init_session()
 
-sidebar = IndexingSidebar(embeddings=st.session_state.available_embedders)
-sidebar.add_sidebar()
-
+add_indexing_sidebar()
 show_menu_indexing()
 
 st.write("## Tokenization")

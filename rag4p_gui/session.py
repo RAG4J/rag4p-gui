@@ -12,15 +12,10 @@ from rag4p.rag.retrieval.strategies.topn_retrieval_strategy import TopNRetrieval
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
 
+from rag4p_gui.components.select_embedder import KEY_SELECTED_EMBEDDER, KEY_SELECTED_EMBEDDING_MODEL, \
+    KEY_AVAILABLE_EMBEDDERS
 from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
-
-KEY_AVAILABLE_EMBEDDERS = 'available_embedders'
-KEY_SELECTED_EMBEDDER = 'selected_embedder'
-KEY_SELECTED_EMBEDDING_MODEL = 'selected_embedding_model'
-
-KEY_SELECTED_SPLITTER = 'selected_splitter'
-KEY_CHUNK_SIZE = 'chunk_size'
-KEY_AVAILABLE_SPLITTERS = 'available_splitters'
+from rag4p_gui.components.select_splitter import KEY_AVAILABLE_SPLITTERS
 
 KEY_AVAILABLE_STRATEGIES = 'available_strategies'
 
@@ -32,18 +27,9 @@ def init_session():
             'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM], ['MiniLM']]
         })
 
-    embeddings = st.session_state.available_embedders
-    if KEY_SELECTED_EMBEDDER not in st.session_state:
-        st.session_state[KEY_SELECTED_EMBEDDER] = embeddings['embedder'][0]
-        st.session_state[KEY_SELECTED_EMBEDDING_MODEL] = embeddings['model'][0][0]
-
     if KEY_AVAILABLE_SPLITTERS not in st.session_state:
         st.session_state.available_splitters = [SentenceSplitter.name(), MaxTokenSplitter.name(),
                                                 SingleChunkSplitter.name()]
-
-    if KEY_SELECTED_SPLITTER not in st.session_state:
-        st.session_state[KEY_SELECTED_SPLITTER] = st.session_state.available_splitters[0]
-        st.session_state[KEY_CHUNK_SIZE] = 512
 
     if KEY_AVAILABLE_STRATEGIES not in st.session_state:
         st.session_state[KEY_AVAILABLE_STRATEGIES] = [

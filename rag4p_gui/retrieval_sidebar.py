@@ -27,8 +27,7 @@ class RetrievalSidebar:
     def __init__(self):
         # Check if we can initialize the retrieval strategy, we need a chosen retriever and a selected strategy
         if (KEY_CHOSEN_RETRIEVER in st.session_state
-                and KEY_SELECTED_STRATEGY in st.session_state
-                and KEY_SELECTED_WEAVIATE_COLLECTION in st.session_state):
+                and KEY_SELECTED_STRATEGY in st.session_state):
             self.initialize_retrieval_strategy()
 
     def __call__(self):
@@ -77,4 +76,4 @@ class RetrievalSidebar:
     @staticmethod
     def find_additional_properties(collection_name: str):
         schema = get_weaviate_access().client.collections.export_config(name=collection_name)
-        return [prop.name for prop in schema.properties if prop.index_searchable]  # TODO where index is searchable
+        return [prop.name for prop in schema.properties if prop.index_searchable]

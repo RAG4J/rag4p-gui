@@ -16,7 +16,7 @@ from rag4p_gui.containers import info_content_store
 from rag4p_gui.data.data_sets import load_internal_content_store, available_data_files
 from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
-from rag4p_gui.indexing_sidebar import IndexingSidebar
+from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.integrations.weaviate import luminis, teqnation
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
 from rag4p_gui.my_menu import show_menu_indexing
@@ -99,8 +99,7 @@ async def initialize_weaviate_content_store():
 st.set_page_config(page_title='RAG4P GUI ~ Indexing', page_icon='🧠', layout='wide')
 init_session()
 
-sidebar = IndexingSidebar(embeddings=st.session_state.available_embedders)
-sidebar.add_sidebar()
+add_indexing_sidebar()
 show_menu_indexing()
 
 st.write("## Indexing")

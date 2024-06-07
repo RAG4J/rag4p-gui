@@ -18,6 +18,9 @@ load_dotenv()
 
 
 def retrieve_chunks_with_strategy():
+    if KEY_RETRIEVAL_STRATEGY not in st.session_state:
+        st.error("No retrieval strategy selected")
+        return
     strategy = st.session_state[KEY_RETRIEVAL_STRATEGY]
     text_to_find = st.session_state.text_to_find
     retrieval_output = strategy.retrieve_max_results(text_to_find, st.session_state[KEY_AMOUNT_OF_CHUNKS])

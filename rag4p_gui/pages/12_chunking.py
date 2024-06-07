@@ -1,10 +1,10 @@
 import streamlit as st
 from rag4p.indexing.input_document import InputDocument
 
-from rag4p_gui.indexing_sidebar import IndexingSidebar
+from rag4p_gui.components.select_splitter import KEY_SELECTED_SPLITTER, KEY_CHUNK_SIZE
+from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.my_menu import show_menu_indexing
-from rag4p_gui.session import init_session, KEY_SELECTED_SPLITTER, KEY_SELECTED_EMBEDDING_MODEL, KEY_CHUNK_SIZE, \
-    KEY_SELECTED_EMBEDDER
+from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDING_MODEL, KEY_SELECTED_EMBEDDER
 from rag4p_gui.util.splitter import create_splitter
 
 
@@ -25,8 +25,7 @@ def chunk_document():
 st.set_page_config(page_title='RAG4P GUI ~ Chunking', page_icon='🔪', layout='wide')
 init_session()
 
-sidebar = IndexingSidebar(embeddings=st.session_state.available_embedders)
-sidebar.add_sidebar()
+add_indexing_sidebar()
 show_menu_indexing()
 
 st.write("## Chunking")

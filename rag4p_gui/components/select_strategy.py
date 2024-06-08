@@ -6,6 +6,8 @@ LKEY_SELECTED_STRATEGY = '_' + KEY_SELECTED_STRATEGY
 KEY_WINDOW_SIZE = 'window_size'
 LKEY_WINDOW_SIZE = '_' + KEY_WINDOW_SIZE
 
+KEY_AVAILABLE_STRATEGIES = 'available_strategies'
+
 
 def strategy_available():
     return KEY_SELECTED_STRATEGY in st.session_state

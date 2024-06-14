@@ -6,10 +6,6 @@ KEY_SELECTED_WEAVIATE_COLLECTION = 'selected_weaviate_collection'
 LKEY_SELECTED_WEAVIATE_COLLECTION = '_' + KEY_SELECTED_WEAVIATE_COLLECTION
 
 
-def change_weaviate_collection():
-    st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION] = st.session_state.get(LKEY_SELECTED_WEAVIATE_COLLECTION)
-
-
 def create_weaviate_collection_selection():
     weaviate_collections = get_weaviate_access().client.collections.list_all(simple=False)
     collections = [key for key in weaviate_collections.keys()]
@@ -26,10 +22,9 @@ def create_weaviate_collection_selection():
         index = 0
 
     with (st.container(border=True)):
-        st.selectbox('Select an existing Weaviate collection',
-                     options=collections,
-                     key=LKEY_SELECTED_WEAVIATE_COLLECTION,
-                     index=index)
+        st.session_state[LKEY_SELECTED_WEAVIATE_COLLECTION] = st.selectbox('Select an existing Weaviate collection',
+                                                                           options=collections,
+                                                                           index=index)
 
         if st.button("Load Weaviate collection"):
-            change_weaviate_collection()
+            st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION] = st.session_state.get(LKEY_SELECTED_WEAVIATE_COLLECTION)

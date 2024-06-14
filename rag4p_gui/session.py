@@ -3,9 +3,10 @@ import streamlit as st
 from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
-from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM
+from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM, MODEL_PHI3, MODEL_LLAMA3
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
-from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA
+from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA, MODEL_GPT4O, MODEL_GPT4, MODEL_GPT4_TURBO, \
+    MODEL_GPT35_TURBO
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
@@ -14,15 +15,16 @@ from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetri
 
 from rag4p_gui.components.select_embedder import KEY_AVAILABLE_EMBEDDERS, KEY_SELECTED_EMBEDDER, \
     KEY_SELECTED_EMBEDDING_MODEL
+from rag4p_gui.components.select_llm import KEY_AVAILABLE_LLMS, KEY_SELECTED_LLM_PROVIDER, KEY_SELECTED_LLM_MODEL
 from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
 from rag4p_gui.components.select_splitter import KEY_AVAILABLE_SPLITTERS, KEY_SELECTED_SPLITTER, KEY_CHUNK_SIZE
 from rag4p_gui.components.select_strategy import KEY_AVAILABLE_STRATEGIES
 
 
 def init_session():
-    # st.write(st.session_state)
     _init_embeddings()
     _init_splitters()
+    _init_llms()
 
     if KEY_AVAILABLE_STRATEGIES not in st.session_state:
         st.session_state[KEY_AVAILABLE_STRATEGIES] = [
@@ -62,3 +64,20 @@ def _init_embeddings():
         avail_embedders = st.session_state.available_embedders
         st.session_state[KEY_SELECTED_EMBEDDING_MODEL] = \
             avail_embedders.loc[avail_embedders['embedder'] == current_embedder, 'model'].values[0][0]
+
+
+def _init_llms():
+    if KEY_AVAILABLE_LLMS not in st.session_state:
+        st.session_state[KEY_AVAILABLE_LLMS] = pd.DataFrame({
+            'llm': ['OpenAI', 'Ollama'],
+            'model': [
+                [MODEL_GPT4O, MODEL_GPT4_TURBO, MODEL_GPT4, MODEL_GPT35_TURBO],
+                [MODEL_PHI3, MODEL_LLAMA3]]
+        })
+    if KEY_SELECTED_LLM_PROVIDER not in st.session_state:
+        st.session_state[KEY_SELECTED_LLM_PROVIDER] = st.session_state[KEY_AVAILABLE_LLMS]['llm'].values[0]
+    if KEY_SELECTED_LLM_MODEL not in st.session_state:
+        current_llm = st.session_state[KEY_SELECTED_LLM_PROVIDER]
+        avail_llms = st.session_state[KEY_AVAILABLE_LLMS]
+        st.session_state[KEY_SELECTED_LLM_MODEL] = \
+            avail_llms.loc[avail_llms['llm'] == current_llm, 'model'].values[0][0]

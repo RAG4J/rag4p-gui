@@ -42,10 +42,9 @@ def create_content_store_selection():
         index = 0
 
     with st.container(border=True):
-        st.selectbox('Select a Content Store backup',
-                     options=stores,
-                     key=LKEY_SELECTED_CONTENT_STORE,
-                     index=index)
+        st.session_state[LKEY_SELECTED_CONTENT_STORE] = st.selectbox('Select a Content Store backup',
+                                                                     options=stores,
+                                                                     index=index)
 
         if st.button("Load Content Store backup"):
             load_content_store_from_backup()

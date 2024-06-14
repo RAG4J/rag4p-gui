@@ -20,13 +20,12 @@ from rag4p_gui.session import init_session
 load_dotenv()
 
 
-def retrieve_chunks_with_strategy():
+def retrieve_chunks_with_strategy(query):
     if KEY_RETRIEVAL_STRATEGY not in st.session_state:
         st.error("No retrieval strategy selected")
         return
     strategy = st.session_state[KEY_RETRIEVAL_STRATEGY]
-    text_to_find = st.session_state.text_to_find
-    retrieval_output = strategy.retrieve_max_results(text_to_find, st.session_state[KEY_AMOUNT_OF_CHUNKS])
+    retrieval_output = strategy.retrieve_max_results(query, st.session_state[KEY_AMOUNT_OF_CHUNKS])
 
     with result_container:
         st.write(f"Found {len(retrieval_output.items)} relevant chunks")
@@ -83,15 +82,14 @@ with st.expander("Show content store details"):
             properties = [f"{name} ({props[name]['type']})" for name in property_names]
             properties_str = ', '.join(properties)
             st.write(properties_str)
-
-            st.write(details)
         else:
             st.error("Unknown retriever")
 
 if strategy_available():
-    st.text_input(label='Query for', key='text_to_find')
-
+    input_container = st.container()
     result_container = st.container()
 
-    if st.session_state.get('text_to_find') is not None and len(st.session_state.get('text_to_find')) > 0:
-        retrieve_chunks_with_strategy()
+    with input_container:
+        query = st.text_input(label='Query for')
+        if st.button("Retrieve chunks"):
+            retrieve_chunks_with_strategy(query)

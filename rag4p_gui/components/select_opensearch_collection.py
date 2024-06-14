@@ -6,10 +6,6 @@ KEY_SELECTED_OPENSEARCH_COLLECTION = 'selected_opensearch_collection'
 LKEY_SELECTED_OPENSEARCH_COLLECTION = '_' + KEY_SELECTED_OPENSEARCH_COLLECTION
 
 
-def change_opensearch_collection():
-    st.session_state[KEY_SELECTED_OPENSEARCH_COLLECTION] = st.session_state.get(LKEY_SELECTED_OPENSEARCH_COLLECTION)
-
-
 def create_opensearch_collection_selection():
     collections = _obtain_alias_names()
 
@@ -25,13 +21,13 @@ def create_opensearch_collection_selection():
         index = 0
 
     with (st.container(border=True)):
-        st.selectbox('Select an existing Opensearch collection',
-                     options=collections,
-                     key=LKEY_SELECTED_OPENSEARCH_COLLECTION,
-                     index=index)
+        st.session_state[LKEY_SELECTED_OPENSEARCH_COLLECTION] = st.selectbox('Select an existing Opensearch collection',
+                                                                             options=collections,
+                                                                             index=index)
 
         if st.button("Load Opensearch collection"):
-            change_opensearch_collection()
+            st.session_state[KEY_SELECTED_OPENSEARCH_COLLECTION] = \
+                st.session_state.get(LKEY_SELECTED_OPENSEARCH_COLLECTION)
 
 
 def _obtain_alias_names():

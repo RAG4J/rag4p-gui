@@ -1,11 +1,13 @@
 import streamlit as st
 
 from rag4p_gui.components.select_content_store import KEY_SELECTED_CONTENT_STORE
+from rag4p_gui.components.select_opensearch_collection import KEY_SELECTED_OPENSEARCH_COLLECTION
 from rag4p_gui.components.select_weaviate_collection import KEY_SELECTED_WEAVIATE_COLLECTION
 
 KEY_CHOSEN_RETRIEVER = 'chosen_retriever'
 VALUE_CHOSEN_RETRIEVER_INTERNAL = 'internal'
 VALUE_CHOSEN_RETRIEVER_WEAVIATE = 'weaviate'
+VALUE_CHOSEN_RETRIEVER_OPENSEARCH = 'opensearch'
 
 
 def create_retriever_selection(container):
@@ -22,6 +24,11 @@ def create_retriever_selection(container):
         labels.append('Weaviate')
         values.append(VALUE_CHOSEN_RETRIEVER_WEAVIATE)
 
+    if KEY_SELECTED_OPENSEARCH_COLLECTION in st.session_state:
+        captions.append(st.session_state.get(KEY_SELECTED_OPENSEARCH_COLLECTION))
+        labels.append('OpenSearch')
+        values.append(VALUE_CHOSEN_RETRIEVER_OPENSEARCH)
+
     if KEY_CHOSEN_RETRIEVER in st.session_state:
         index = values.index(st.session_state.get(KEY_CHOSEN_RETRIEVER))
     else:
@@ -33,3 +40,5 @@ def create_retriever_selection(container):
             st.session_state[KEY_CHOSEN_RETRIEVER] = VALUE_CHOSEN_RETRIEVER_INTERNAL
         elif retriever == 'Weaviate':
             st.session_state[KEY_CHOSEN_RETRIEVER] = VALUE_CHOSEN_RETRIEVER_WEAVIATE
+        elif retriever == 'OpenSearch':
+            st.session_state[KEY_CHOSEN_RETRIEVER] = VALUE_CHOSEN_RETRIEVER_OPENSEARCH

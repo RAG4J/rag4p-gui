@@ -6,15 +6,19 @@ from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetri
 from rag4p.integrations.weaviate.weaviate_retriever import WeaviateRetriever
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.integrations.openai import DEFAULT_EMBEDDING_MODEL
+from rag4p.integrations.opensearch.opensearch_retriever import OpenSearchRetriever
 
 from rag4p_gui.components.select_content_store import create_content_store_selection, KEY_SELECTED_CONTENT_STORE
 from rag4p_gui.components.select_number_of_chunks import create_number_of_chunks_selection, KEY_AMOUNT_OF_CHUNKS
+from rag4p_gui.components.select_opensearch_collection import create_opensearch_collection_selection, \
+    KEY_SELECTED_OPENSEARCH_COLLECTION
 from rag4p_gui.components.select_retriever import KEY_CHOSEN_RETRIEVER, VALUE_CHOSEN_RETRIEVER_INTERNAL, \
-    VALUE_CHOSEN_RETRIEVER_WEAVIATE, create_retriever_selection
+    VALUE_CHOSEN_RETRIEVER_WEAVIATE, create_retriever_selection, VALUE_CHOSEN_RETRIEVER_OPENSEARCH
 from rag4p_gui.components.select_strategy import KEY_SELECTED_STRATEGY, LKEY_SELECTED_STRATEGY, \
     create_retrieval_strategy_selection, KEY_WINDOW_SIZE
 from rag4p_gui.components.select_weaviate_collection import create_weaviate_collection_selection, \
     KEY_SELECTED_WEAVIATE_COLLECTION
+from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
 from rag4p_gui.util.embedding import create_embedder
 
@@ -39,6 +43,7 @@ class RetrievalSidebar:
 
             create_content_store_selection()
             create_weaviate_collection_selection()
+            create_opensearch_collection_selection()
 
             create_retriever_selection(choose_retriever_container)
 
@@ -53,12 +58,21 @@ class RetrievalSidebar:
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_WEAVIATE:
             embedder = create_embedder(OpenAIEmbedder.supplier(), DEFAULT_EMBEDDING_MODEL)
             collection_name = st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION]
-            additional_properties = RetrievalSidebar.find_additional_properties(collection_name)
+            additional_properties = RetrievalSidebar.find_additional_properties_weaviate(collection_name)
             content_store = WeaviateRetriever(get_weaviate_access(),
                                               embedder=embedder,
                                               additional_properties=additional_properties,
                                               hybrid=True,
                                               collection_name=collection_name)
+        elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_OPENSEARCH:
+            embedder = create_embedder(OpenAIEmbedder.supplier(), DEFAULT_EMBEDDING_MODEL)
+            index_name = st.session_state[KEY_SELECTED_OPENSEARCH_COLLECTION]
+            additional_properties = RetrievalSidebar.find_additional_properties_opensearch(index_name)
+            content_store = OpenSearchRetriever(get_opensearch_access(),
+                                                index_name=index_name,
+                                                hybrid=True,
+                                                additional_properties=additional_properties,
+                                                embedder=embedder)
         else:
             raise ValueError(f"Unsupported retriever: {st.session_state[KEY_CHOSEN_RETRIEVER]}")
 
@@ -74,6 +88,13 @@ class RetrievalSidebar:
         st.session_state[KEY_RETRIEVAL_STRATEGY] = strategy
 
     @staticmethod
-    def find_additional_properties(collection_name: str):
+    def find_additional_properties_weaviate(collection_name: str):
         schema = get_weaviate_access().client.collections.export_config(name=collection_name)
         return [prop.name for prop in schema.properties if prop.index_searchable]
+
+    @staticmethod
+    def find_additional_properties_opensearch(index_name: str):
+        details = get_opensearch_access().client().indices.get(index=index_name)
+        index_name = list(details.keys())[0]
+        props = details[index_name]['mappings']['properties']
+        return [prop for prop in props if props[prop]['type'] == 'text']

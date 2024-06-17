@@ -1,6 +1,8 @@
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
+from rag4p.integrations.bedrock.bedrock_embedder import BedrockEmbedder
+from rag4p.integrations.bedrock.access_bedrock import AccessBedrock
 from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 from rag4p.util.key_loader import KeyLoader
 
@@ -13,6 +15,9 @@ def create_embedder(embedder_name: str, model_name: str):
     elif embedder_name == OllamaEmbedder.supplier():
         access_ollama = AccessOllama()
         embedder = OllamaEmbedder(access_ollama=access_ollama, model=model_name)
+    elif embedder_name == BedrockEmbedder.supplier():
+        access_bedrock = AccessBedrock.init_from_env(key_loader=key_loader)
+        embedder = BedrockEmbedder(access_bedrock=access_bedrock, model=model_name)
     elif embedder_name == OnnxEmbedder.supplier():
         embedder = OnnxEmbedder()
     else:

@@ -7,6 +7,8 @@ from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MIN
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA, MODEL_GPT4O, MODEL_GPT4, MODEL_GPT4_TURBO, \
     MODEL_GPT35_TURBO
+from rag4p.integrations.bedrock import MODEL_TITAN_EXPRESS, EMBEDDING_MODEL_TITAN, EMBEDDING_MODEL_TITAN_V2
+from rag4p.integrations.bedrock.bedrock_embedder import BedrockEmbedder
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
@@ -54,8 +56,10 @@ def _init_splitters():
 def _init_embeddings():
     if KEY_AVAILABLE_EMBEDDERS not in st.session_state:
         st.session_state.available_embedders = pd.DataFrame({
-            'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), OnnxEmbedder.supplier()],
-            'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM], ['MiniLM']]
+            'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), BedrockEmbedder.supplier(),
+                         OnnxEmbedder.supplier()],
+            'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM],
+                      [EMBEDDING_MODEL_TITAN_V2, EMBEDDING_MODEL_TITAN], ['MiniLM']]
         })
     if KEY_SELECTED_EMBEDDER not in st.session_state:
         st.session_state[KEY_SELECTED_EMBEDDER] = st.session_state.available_embedders['embedder'].values[0]
@@ -69,10 +73,11 @@ def _init_embeddings():
 def _init_llms():
     if KEY_AVAILABLE_LLMS not in st.session_state:
         st.session_state[KEY_AVAILABLE_LLMS] = pd.DataFrame({
-            'llm': ['OpenAI', 'Ollama'],
+            'llm': ['OpenAI', 'Ollama', 'Bedrock'],
             'model': [
                 [MODEL_GPT4O, MODEL_GPT4_TURBO, MODEL_GPT4, MODEL_GPT35_TURBO],
-                [MODEL_PHI3, MODEL_LLAMA3]]
+                [MODEL_PHI3, MODEL_LLAMA3],
+                [MODEL_TITAN_EXPRESS]]
         })
     if KEY_SELECTED_LLM_PROVIDER not in st.session_state:
         st.session_state[KEY_SELECTED_LLM_PROVIDER] = st.session_state[KEY_AVAILABLE_LLMS]['llm'].values[0]

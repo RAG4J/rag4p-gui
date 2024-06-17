@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_answer_generator import OllamaAnswerGenerator
 from rag4p.integrations.openai.openai_answer_generator import OpenaiAnswerGenerator
+from rag4p.integrations.bedrock.bedrock_answer_generator import BedrockAnswerGenerator
+from rag4p.integrations.bedrock.access_bedrock import AccessBedrock
 from rag4p.util.key_loader import KeyLoader
 
 from rag4p_gui.components.select_content_store import KEY_SELECTED_CONTENT_STORE
@@ -39,6 +41,9 @@ def construct_answer(answer_context: str, question: str):
         answer_generator = OllamaAnswerGenerator(access_ollama=access_ollama, model=model_)
     elif st.session_state[KEY_SELECTED_LLM_PROVIDER].lower() == 'openai':
         answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key(), openai_model=model_)
+    elif st.session_state[KEY_SELECTED_LLM_PROVIDER].lower() == 'bedrock':
+        access_bedrock = AccessBedrock()
+        answer_generator = BedrockAnswerGenerator(model=model_, access_bedrock=access_bedrock)
     else:
         st.error("No LLM provider selected")
         return
@@ -77,5 +82,6 @@ if strategy_available():
             response = retrieve_chunks_with_strategy(query)
             answer = construct_answer(response.construct_context(), query)
             with result_container:
-                st.info(f"{answer}")
+                st.info(f"""Generated answer:  
+                {answer}""")
                 st.write(f"{response.construct_context()}")

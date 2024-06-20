@@ -1,6 +1,7 @@
 import streamlit as st
 
 from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
+from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 
 KEY_SELECTED_OPENSEARCH_COLLECTION = 'selected_opensearch_collection'
 LKEY_SELECTED_OPENSEARCH_COLLECTION = '_' + KEY_SELECTED_OPENSEARCH_COLLECTION
@@ -10,7 +11,7 @@ def create_opensearch_collection_selection():
     collections = _obtain_alias_names()
 
     if not collections:
-        st.info('No indexes found in Weaviate')
+        st.info('No indexes found in OpenSearch.')
         return
 
     if LKEY_SELECTED_OPENSEARCH_COLLECTION in st.session_state:
@@ -31,15 +32,7 @@ def create_opensearch_collection_selection():
 
 
 def _obtain_alias_names():
-    # Get all aliases
-    response = get_opensearch_access().client().indices.get_alias()
+    service = OpenSearchContentStoreMetadataService(get_opensearch_access())
 
-    # Extract only the alias names
-    alias_names = []
-    for index, settings in response.items():
-        if index.startswith('.'):
-            continue
-        aliases = settings.get('aliases', {})
-        alias_names.extend(aliases.keys())
-
-    return alias_names
+    available_data = service.get_all_meta_data()
+    return [data.collection_name for data in available_data]

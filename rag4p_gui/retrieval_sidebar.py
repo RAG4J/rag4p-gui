@@ -19,7 +19,9 @@ from rag4p_gui.components.select_strategy import KEY_SELECTED_STRATEGY, LKEY_SEL
 from rag4p_gui.components.select_weaviate_collection import create_weaviate_collection_selection, \
     KEY_SELECTED_WEAVIATE_COLLECTION
 from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
+from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
 from rag4p_gui.util.embedding import create_embedder
 
 LKEY_AMOUNT_OF_CHUNKS = '_' + KEY_AMOUNT_OF_CHUNKS
@@ -56,18 +58,25 @@ class RetrievalSidebar:
         if st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_INTERNAL:
             content_store = st.session_state.content_store
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_WEAVIATE:
-            embedder = create_embedder(OpenAIEmbedder.supplier(), DEFAULT_EMBEDDING_MODEL)
             collection_name = st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION]
+            service = WeaviateContentStoreMetadataService(get_weaviate_access())
+            metadata = service.get_meta_data(collection_name)
+            embedder = create_embedder(metadata.embedder, metadata.embedding_model)
             additional_properties = RetrievalSidebar.find_additional_properties_weaviate(collection_name)
+
             content_store = WeaviateRetriever(get_weaviate_access(),
                                               embedder=embedder,
                                               additional_properties=additional_properties,
                                               hybrid=True,
                                               collection_name=collection_name)
+
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_OPENSEARCH:
-            embedder = create_embedder(OpenAIEmbedder.supplier(), DEFAULT_EMBEDDING_MODEL)
             index_name = st.session_state[KEY_SELECTED_OPENSEARCH_COLLECTION]
+            service = OpenSearchContentStoreMetadataService(get_opensearch_access())
+            metadata = service.get_meta_data(index_name)
+            embedder = create_embedder(metadata.embedder, metadata.embedding_model)
             additional_properties = RetrievalSidebar.find_additional_properties_opensearch(index_name)
+
             content_store = OpenSearchRetriever(get_opensearch_access(),
                                                 index_name=index_name,
                                                 hybrid=True,

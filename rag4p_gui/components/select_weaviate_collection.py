@@ -1,14 +1,14 @@
 import streamlit as st
 
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
 
 KEY_SELECTED_WEAVIATE_COLLECTION = 'selected_weaviate_collection'
 LKEY_SELECTED_WEAVIATE_COLLECTION = '_' + KEY_SELECTED_WEAVIATE_COLLECTION
 
 
 def create_weaviate_collection_selection():
-    weaviate_collections = get_weaviate_access().client.collections.list_all(simple=False)
-    collections = [key for key in weaviate_collections.keys()]
+    collections = _obtain_collection_names()
 
     if not collections:
         st.info('No collections found in Weaviate')
@@ -28,3 +28,10 @@ def create_weaviate_collection_selection():
 
         if st.button("Load Weaviate collection"):
             st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION] = st.session_state.get(LKEY_SELECTED_WEAVIATE_COLLECTION)
+
+
+def _obtain_collection_names():
+    service = WeaviateContentStoreMetadataService(get_weaviate_access())
+
+    available_data = service.get_all_meta_data()
+    return [data.collection_name for data in available_data]

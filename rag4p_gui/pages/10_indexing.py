@@ -8,8 +8,6 @@ from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.integrations.opensearch.opensearch_content_store import OpenSearchContentStore
-from rag4p.integrations.weaviate.chunk_collection import weaviate_properties
-from rag4p.integrations.weaviate.weaviate_content_store import WeaviateContentStore
 from rag4p.util.key_loader import KeyLoader
 
 from rag4p_gui.components.select_content_store import create_content_store_selection
@@ -21,8 +19,10 @@ from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
 from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
 from rag4p_gui.integrations.opensearch.indexing import update_template
+from rag4p_gui.integrations.opensearch.opensearch_indexing_data import OpenSearchIndexingData
 from rag4p_gui.integrations.weaviate import luminis, teqnation
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.integrations.weaviate.weviate_indexing_data import WeaviateIndexingData
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDER
 from rag4p_gui.util.embedding import create_embedder
@@ -32,7 +32,7 @@ load_dotenv()
 key_loader = KeyLoader()
 
 
-async def initialize_content_store():
+async def initialize_local_content_store():
     dataset = st.session_state.selected_data_file
 
     kwargs = {
@@ -57,74 +57,13 @@ async def initialize_content_store():
 
 
 async def initialize_weaviate_content_store():
-    if st.session_state.selected_embedder != OpenAIEmbedder.supplier():
-        raise ValueError(f"Embedder {st.session_state.selected_embedder} not supported for Weaviate")
-
-    dataset = st.session_state.selected_data_file
-
-    kwargs = {
-        'provider': st.session_state.selected_embedder.lower(),
-    }
-    kwargs.update(**dataset)
-    if st.session_state.selected_splitter == MaxTokenSplitter.name():
-        kwargs['chunk_size'] = st.session_state.chunk_size
-
-    reader, additional_properties = _create_reader(dataset)
-
-    kwargs['embedding_model'] = st.session_state.selected_embedding_model
-
-    _collection_name = st.session_state.new_collection_name
-    _embedder = create_embedder(embedder_name=st.session_state.selected_embedder,
-                                model_name=st.session_state.selected_embedding_model)
-    _splitter = create_splitter(splitter_name=st.session_state.selected_splitter, **kwargs)
-    _content_store = WeaviateContentStore(weaviate_access=get_weaviate_access(),
-                                          embedder=_embedder,
-                                          collection_name=_collection_name)
-    get_weaviate_access().force_create_collection(collection_name=_collection_name,
-                                                  properties=weaviate_properties(additional_properties))
-    indexing_service = IndexingService(content_store=_content_store)
-    response = indexing_service.index_documents(content_reader=reader, splitter=_splitter)
-    print(response)
+    index_data = WeaviateIndexingData(access_weaviate=get_weaviate_access())
+    index_data()
 
 
 async def initialize_opensearch_content_store():
-    if st.session_state.selected_embedder != OpenAIEmbedder.supplier():
-        raise ValueError(f"Embedder {st.session_state.selected_embedder} not supported for OpenSearch")
-
-    dataset = st.session_state.selected_data_file
-
-    kwargs = {
-        'provider': st.session_state.selected_embedder.lower(),
-    }
-    kwargs.update(**dataset)
-    if st.session_state.selected_splitter == MaxTokenSplitter.name():
-        kwargs['chunk_size'] = st.session_state.chunk_size
-
-    reader, additional_properties = _create_reader(dataset)
-
-    kwargs['embedding_model'] = st.session_state.selected_embedding_model
-
-    _collection_name = st.session_state.new_collection_name
-    _embedder = create_embedder(embedder_name=st.session_state.selected_embedder,
-                                model_name=st.session_state.selected_embedding_model)
-    _splitter = create_splitter(splitter_name=st.session_state.selected_splitter, **kwargs)
-
-    opensearch_client = get_opensearch_access()
-    embedder_size = len(_embedder.embed("test"))
-    update_template(opensearch_client=opensearch_client,
-                    index_name=_collection_name,
-                    dataset=dataset,
-                    embedding_dimension=embedder_size)
-
-    index_name = opensearch_client.create_index(provided_alias_name=_collection_name)
-
-    _content_store = OpenSearchContentStore(opensearch_client=opensearch_client,
-                                            embedder=_embedder,
-                                            index_name=index_name)
-    indexing_service = IndexingService(content_store=_content_store)
-    response = indexing_service.index_documents(content_reader=reader, splitter=_splitter)
-    print(response)
-    opensearch_client.switch_alias_to(index_name=index_name, provided_alias_name=_collection_name)
+    index_data = OpenSearchIndexingData(get_opensearch_access())
+    index_data()
 
 
 def _create_reader(dataset):
@@ -164,7 +103,7 @@ with column1:
                  format_func=lambda x: x['name'])
 
     if st.button("Initialize Content Store"):
-        asyncio.run(initialize_content_store())
+        asyncio.run(initialize_local_content_store())
 
 with column2:
     st.text_input("Enter a new collection name", key="new_collection_name")

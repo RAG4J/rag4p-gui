@@ -44,18 +44,6 @@ async def load_internal_content_store(content_reader: ContentReader, splitter_na
     return internal_content_store
 
 
-async def initialize_content_store(reader: ContentReader):
-    _content_store = await load_internal_content_store(
-        content_reader=reader,
-        splitter_name="sentence",
-        embedder_name=OllamaEmbedder.supplier(),
-        embedding_model=EMBEDDING_MODEL_NOMIC,
-        chunk_size=200
-    )
-
-    return _content_store
-
-
 def available_content_stores(path: str = "../../data_backups"):
     current_script_path = os.path.dirname(os.path.realpath(__file__))
     combined_path = os.path.join(current_script_path, path)
@@ -82,32 +70,3 @@ def content_store_metadata_from_backup(path: str):
         metadata = json.load(f)
 
     return metadata
-
-
-if __name__ == '__main__':
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    print(available_content_stores())
-
-    # Write the data to the content store
-    wp_reader = WordpressJsonlReader("luminis_wp/all_luminis_wp.jsonl")
-    content_store = asyncio.run(initialize_content_store(wp_reader))
-    content_store.backup("../../data_backups/all_luminis_wp_ollama")
-
-    # data_backup_path = "../../data_backups/few_luminis_wp"
-    # _metadata = content_store_metadata_from_backup(data_backup_path)
-    #
-    # content_store = InternalContentStore.load_from_backup(
-    #     embedder=create_embedder(embedder_name=_metadata['supplier'], model_name=_metadata['model']),
-    #     path="../../data_backups/few_luminis_wp")
-
-    query = "What is AWS?"
-    relevant_chunks = content_store.find_relevant_chunks(query=query, max_results=2)
-    print(f"Found {len(relevant_chunks)} relevant chunks for query: {query}")
-    for chunk in relevant_chunks:
-        print(f"Document: {chunk.document_id}")
-        print(f"Chunk id: {chunk.chunk_id}")
-        print(f"Text: {chunk.chunk_text}")
-        print(f"Distance: {chunk.score:.3f}")

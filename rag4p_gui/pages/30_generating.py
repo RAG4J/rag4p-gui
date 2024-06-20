@@ -13,6 +13,7 @@ from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
 from rag4p_gui.components.select_opensearch_collection import KEY_SELECTED_OPENSEARCH_COLLECTION
 from rag4p_gui.components.select_strategy import KEY_SELECTED_STRATEGY, strategy_available
 from rag4p_gui.components.select_weaviate_collection import KEY_SELECTED_WEAVIATE_COLLECTION
+from rag4p_gui.containers import show_retriever_information
 from rag4p_gui.generating_sidebar import GeneratingSidebar
 from rag4p_gui.my_menu import show_menu
 from rag4p_gui.retrieval_sidebar import KEY_RETRIEVAL_STRATEGY
@@ -59,18 +60,8 @@ show_menu()
 
 st.write("## Generating")
 
-if KEY_SELECTED_WEAVIATE_COLLECTION in st.session_state:
-    st.write(f"Selected Weaviate collection: {st.session_state[KEY_SELECTED_WEAVIATE_COLLECTION]}")
-if KEY_SELECTED_CONTENT_STORE in st.session_state:
-    st.write(f"Selected content store: {st.session_state[KEY_SELECTED_CONTENT_STORE]}")
-if KEY_SELECTED_OPENSEARCH_COLLECTION in st.session_state:
-    st.write(f"Selected OpenSearch index: {st.session_state[KEY_SELECTED_OPENSEARCH_COLLECTION]}")
-if KEY_SELECTED_STRATEGY in st.session_state:
-    st.write(f"Selected strategy: {st.session_state[KEY_SELECTED_STRATEGY]}")
-if KEY_SELECTED_LLM_PROVIDER in st.session_state:
-    st.write(f"Selected LLM provider: {st.session_state[KEY_SELECTED_LLM_PROVIDER]}")
-if KEY_SELECTED_LLM_MODEL in st.session_state:
-    st.write(f"Selected LLM model: {st.session_state[KEY_SELECTED_LLM_MODEL]}")
+with st.expander("Show content store details"):
+    show_retriever_information()
 
 if strategy_available():
     input_container = st.container()
@@ -84,4 +75,6 @@ if strategy_available():
             with result_container:
                 st.info(f"""Generated answer:  
                 {answer}""")
+
+            with st.expander("Show provided context"):
                 st.write(f"{response.construct_context()}")

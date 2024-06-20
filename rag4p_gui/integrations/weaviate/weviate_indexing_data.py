@@ -21,3 +21,6 @@ class WeaviateIndexingData(IndexingData):
                                                      properties=weaviate_properties(self.additional_properties))
 
         return content_store
+
+    def _after_indexing(self):
+        pass

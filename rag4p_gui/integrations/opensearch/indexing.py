@@ -25,19 +25,25 @@ class TeqnationComponentTemplate(ComponentTemplate):
 
 class LuminisComponentMappings(ComponentMappings):
     def __init__(self):
-        version = 1
+        version = 2
         name = "luminis_mappings"
         mappings = {
+            "post_id": {
+                "type": "integer"
+            },
             "title": {
                 "type": "text"
             },
-            "content": {
-                "type": "text"
+            "url": {
+                "type": "keyword"
             },
-            "date": {
+            "updated_at": {
                 "type": "date"
             },
             "tags": {
+                "type": "keyword"
+            },
+            "categories": {
                 "type": "keyword"
             }
         }

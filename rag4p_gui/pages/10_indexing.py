@@ -3,30 +3,28 @@ import os
 
 import streamlit as st
 import streamlit_antd_components as sac
+import pandas as pd
+
 from dotenv import load_dotenv
-from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
-from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
-from rag4p.integrations.opensearch.opensearch_content_store import OpenSearchContentStore
 from rag4p.util.key_loader import KeyLoader
 
+from rag4p_gui.components.manage_collections import create_collection_manager
 from rag4p_gui.components.select_content_store import create_content_store_selection
-from rag4p_gui.components.select_weaviate_collection import create_weaviate_collection_selection
 from rag4p_gui.containers import info_content_store
 from rag4p_gui.data.data_sets import load_internal_content_store, available_data_files
 from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
 from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
-from rag4p_gui.integrations.opensearch.indexing import update_template
+from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 from rag4p_gui.integrations.opensearch.opensearch_indexing_data import OpenSearchIndexingData
 from rag4p_gui.integrations.weaviate import luminis, teqnation
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
 from rag4p_gui.integrations.weaviate.weviate_indexing_data import WeaviateIndexingData
 from rag4p_gui.my_menu import show_menu_indexing
 from rag4p_gui.session import init_session, KEY_SELECTED_EMBEDDER
-from rag4p_gui.util.embedding import create_embedder
-from rag4p_gui.util.splitter import create_splitter
 
 load_dotenv()
 key_loader = KeyLoader()
@@ -132,10 +130,16 @@ if st.session_state.get("content_store_initialized"):
             st.session_state.content_store.add_metadata('backup_file', f"data_backups/{st.session_state.backup_name}")
             st.session_state.content_store.backup(f"data_backups/{st.session_state.backup_name}")
 
-sac.divider(label="Show available content stores")
+sac.divider(label="Load available content store into memory")
+create_content_store_selection()
 
-column1, column2 = st.columns(2)
-with column1:
-    create_content_store_selection()
-with column2:
-    create_weaviate_collection_selection()
+sac.divider(label="Manage collections in Weaviate and OpenSearch")
+
+weaviate_service = WeaviateContentStoreMetadataService(get_weaviate_access())
+opensearch_service = OpenSearchContentStoreMetadataService(get_opensearch_access())
+
+weaviate_container = st.container()
+opensearch_container = st.container()
+
+create_collection_manager(weaviate_container, weaviate_service, "Weaviate")
+create_collection_manager(opensearch_container, opensearch_service, "OpenSearch")

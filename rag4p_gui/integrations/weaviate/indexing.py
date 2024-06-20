@@ -12,6 +12,14 @@ class WeaviateContentStoreMetadataService(ContentStoreMetadataService):
         self.access_weaviate = access_weaviate
         self.init_collection()
 
+    def delete_meta_data(self, collection_name: str):
+        doc_id = self._find_document_id(collection_name)
+        if doc_id is not None:
+            self._meta_coll().data.delete_by_id(doc_id)
+        else:
+            raise ValueError(f"Meta document with collection name {collection_name} does not exist")
+        self.access_weaviate.delete_collection(collection_name)
+
     def get_all_meta_data(self) -> [ContentStoreMetadata]:
         meta_list = self._meta_coll().iterator()
 

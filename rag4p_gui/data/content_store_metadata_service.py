@@ -41,3 +41,13 @@ class ContentStoreMetadataService(ABC):
         :return: The metadata of all content sets.
         """
         pass
+
+    @abstractmethod
+    def delete_meta_data(self, collection_name: str):
+        """
+        Delete the metadata of a content set. The implementation can decide to remove the underlying content set as
+        well.
+        :param collection_name: The name of the content set.
+        :return:
+        """
+        pass

@@ -110,6 +110,12 @@ class OpenSearchContentStoreMetadataService(ContentStoreMetadataService):
         self.opensearch_client = opensearch_client
         self.init_collection()
 
+    def delete_meta_data(self, collection_name: str):
+        client = self.opensearch_client.client()
+        client.delete(index=META_DATA_COLLECTION_NAME, id=collection_name)
+        self.opensearch_client.delete_index(collection_name)
+        client.indices.delete(index=f"{collection_name}-*")
+
     def init_collection(self, force: bool = False):
         client = self.opensearch_client.client()
 
@@ -186,21 +192,3 @@ class OpenSearchContentStoreMetadataService(ContentStoreMetadataService):
             created_at=hit["_source"]["created_at"],
             contentReader=hit["_source"]["content_reader"]
         )
-
-
-if __name__ == "__main__":
-    from rag4p.util.key_loader import KeyLoader
-    from rag4p.integrations.opensearch.connection_builder import build_aws_search_service
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    key_loader = KeyLoader()
-    opensearch_conn = build_aws_search_service(stack_name=key_loader.get_property("OPENSEARCH_STACK_NAME"),
-                                               application_prefix=key_loader.get_property("OPENSEARCH_APP_PREFIX"))
-    opensearch_client = OpenSearchClient(opensearch_conn)
-
-    meta_service = OpenSearchContentStoreMetadataService(opensearch_client)
-    meta_service.init_collection(force=True)
-
-

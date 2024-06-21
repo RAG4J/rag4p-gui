@@ -10,6 +10,8 @@ python = "^3.11"
 streamlit = "^1.34.0"
 rag4p = "^0.8.0"
 streamlit-antd-components = "^0.3.2"
+scikit-learn = "^1.5.0"
+plotly = "^5.22.0"
 
 
 [tool.poetry.group.dev.dependencies]

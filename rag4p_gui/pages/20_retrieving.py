@@ -1,22 +1,12 @@
 import streamlit as st
 import streamlit_antd_components as sac
-
 from dotenv import load_dotenv
 
-from rag4p_gui.components.select_content_store import KEY_SELECTED_CONTENT_STORE
 from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
-from rag4p_gui.components.select_opensearch_collection import KEY_SELECTED_OPENSEARCH_COLLECTION
-from rag4p_gui.components.select_retriever import VALUE_CHOSEN_RETRIEVER_OPENSEARCH
-from rag4p_gui.components.select_strategy import KEY_SELECTED_STRATEGY, strategy_available
-from rag4p_gui.components.select_weaviate_collection import KEY_SELECTED_WEAVIATE_COLLECTION
-from rag4p_gui.containers import info_content_store, info_metadata_content_store, show_retriever_information
-from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
-from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
-from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
-from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
+from rag4p_gui.components.select_strategy import strategy_available
+from rag4p_gui.containers import show_retriever_information
 from rag4p_gui.my_menu import show_menu
-from rag4p_gui.retrieval_sidebar import RetrievalSidebar, KEY_RETRIEVAL_STRATEGY, KEY_CHOSEN_RETRIEVER, \
-    VALUE_CHOSEN_RETRIEVER_INTERNAL, VALUE_CHOSEN_RETRIEVER_WEAVIATE
+from rag4p_gui.retrieval_sidebar import RetrievalSidebar, KEY_RETRIEVAL_STRATEGY
 from rag4p_gui.session import init_session
 
 load_dotenv()

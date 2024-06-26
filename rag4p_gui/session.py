@@ -19,6 +19,7 @@ from rag4p_gui.components.select_embedder import KEY_AVAILABLE_EMBEDDERS, KEY_SE
     KEY_SELECTED_EMBEDDING_MODEL
 from rag4p_gui.components.select_llm import KEY_AVAILABLE_LLMS, KEY_SELECTED_LLM_PROVIDER, KEY_SELECTED_LLM_MODEL
 from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
+from rag4p_gui.components.select_retriever import KEY_HYBRID_SEARCH
 from rag4p_gui.components.select_splitter import KEY_AVAILABLE_SPLITTERS, KEY_SELECTED_SPLITTER, KEY_CHUNK_SIZE
 from rag4p_gui.components.select_strategy import KEY_AVAILABLE_STRATEGIES
 
@@ -27,6 +28,7 @@ def init_session():
     _init_embeddings()
     _init_splitters()
     _init_llms()
+    _init_hybrid_search()
 
     if KEY_AVAILABLE_STRATEGIES not in st.session_state:
         st.session_state[KEY_AVAILABLE_STRATEGIES] = [
@@ -86,3 +88,8 @@ def _init_llms():
         avail_llms = st.session_state[KEY_AVAILABLE_LLMS]
         st.session_state[KEY_SELECTED_LLM_MODEL] = \
             avail_llms.loc[avail_llms['llm'] == current_llm, 'model'].values[0][0]
+
+
+def _init_hybrid_search():
+    if KEY_HYBRID_SEARCH not in st.session_state:
+        st.session_state[KEY_HYBRID_SEARCH] = True

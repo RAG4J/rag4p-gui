@@ -9,6 +9,13 @@ VALUE_CHOSEN_RETRIEVER_INTERNAL = 'internal'
 VALUE_CHOSEN_RETRIEVER_WEAVIATE = 'weaviate'
 VALUE_CHOSEN_RETRIEVER_OPENSEARCH = 'opensearch'
 
+KEY_HYBRID_SEARCH = 'hybrid_search'
+LKEY_HYBRID_SEARCH = '_' + KEY_HYBRID_SEARCH
+
+
+def change_hybrid_search():
+    st.session_state[KEY_HYBRID_SEARCH] = st.session_state[LKEY_HYBRID_SEARCH]
+
 
 def create_retriever_selection(container):
     labels = []
@@ -34,6 +41,9 @@ def create_retriever_selection(container):
     else:
         index = 0
 
+    if LKEY_HYBRID_SEARCH not in st.session_state:
+        st.session_state[LKEY_HYBRID_SEARCH] = st.session_state[KEY_HYBRID_SEARCH]
+
     with container:
         retriever = st.radio('Choose the retriever', options=labels, captions=captions, index=index)
         if retriever == 'Content Store':
@@ -42,3 +52,6 @@ def create_retriever_selection(container):
             st.session_state[KEY_CHOSEN_RETRIEVER] = VALUE_CHOSEN_RETRIEVER_WEAVIATE
         elif retriever == 'OpenSearch':
             st.session_state[KEY_CHOSEN_RETRIEVER] = VALUE_CHOSEN_RETRIEVER_OPENSEARCH
+
+        if retriever != 'Content Store':
+            st.toggle(label='Use Hybrid search', key=LKEY_HYBRID_SEARCH, on_change=change_hybrid_search)

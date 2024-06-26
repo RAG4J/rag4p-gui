@@ -13,7 +13,7 @@ from rag4p_gui.components.select_number_of_chunks import create_number_of_chunks
 from rag4p_gui.components.select_opensearch_collection import create_opensearch_collection_selection, \
     KEY_SELECTED_OPENSEARCH_COLLECTION
 from rag4p_gui.components.select_retriever import KEY_CHOSEN_RETRIEVER, VALUE_CHOSEN_RETRIEVER_INTERNAL, \
-    VALUE_CHOSEN_RETRIEVER_WEAVIATE, create_retriever_selection, VALUE_CHOSEN_RETRIEVER_OPENSEARCH
+    VALUE_CHOSEN_RETRIEVER_WEAVIATE, create_retriever_selection, VALUE_CHOSEN_RETRIEVER_OPENSEARCH, KEY_HYBRID_SEARCH
 from rag4p_gui.components.select_strategy import KEY_SELECTED_STRATEGY, LKEY_SELECTED_STRATEGY, \
     create_retrieval_strategy_selection, KEY_WINDOW_SIZE
 from rag4p_gui.components.select_weaviate_collection import create_weaviate_collection_selection, \
@@ -55,6 +55,7 @@ class RetrievalSidebar:
 
     @staticmethod
     def initialize_retrieval_strategy():
+        hybrid_search = st.session_state[KEY_HYBRID_SEARCH]
         if st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_INTERNAL:
             content_store = st.session_state.content_store
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_WEAVIATE:
@@ -67,7 +68,7 @@ class RetrievalSidebar:
             content_store = WeaviateRetriever(get_weaviate_access(),
                                               embedder=embedder,
                                               additional_properties=additional_properties,
-                                              hybrid=True,
+                                              hybrid=hybrid_search,
                                               collection_name=collection_name)
 
         elif st.session_state[KEY_CHOSEN_RETRIEVER] == VALUE_CHOSEN_RETRIEVER_OPENSEARCH:
@@ -79,7 +80,7 @@ class RetrievalSidebar:
 
             content_store = OpenSearchRetriever(get_opensearch_access(),
                                                 index_name=index_name,
-                                                hybrid=True,
+                                                hybrid=hybrid_search,
                                                 additional_properties=additional_properties,
                                                 embedder=embedder)
         else:

@@ -1,6 +1,6 @@
 import streamlit as st
 
-from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
+from rag4p_gui.integrations.opensearch.connect import get_opensearch_access, NoAwsSessionError
 from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 
 KEY_SELECTED_OPENSEARCH_COLLECTION = 'selected_opensearch_collection'
@@ -32,7 +32,11 @@ def create_opensearch_collection_selection():
 
 
 def _obtain_alias_names():
-    service = OpenSearchContentStoreMetadataService(get_opensearch_access())
+    try:
+        service = OpenSearchContentStoreMetadataService(get_opensearch_access())
 
-    available_data = service.get_all_meta_data()
-    return [data.collection_name for data in available_data]
+        available_data = service.get_all_meta_data()
+        return [data.collection_name for data in available_data]
+    except NoAwsSessionError as e:
+        st.error(f"{e}")
+        return []

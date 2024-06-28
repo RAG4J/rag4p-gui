@@ -22,7 +22,8 @@ def construct_answer(answer_context: str, question: str, key_loader: KeyLoader =
     elif st.session_state[KEY_SELECTED_LLM_PROVIDER].lower() == 'openai':
         answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key(), openai_model=model_)
     elif st.session_state[KEY_SELECTED_LLM_PROVIDER].lower() == 'bedrock':
-        access_bedrock = AccessBedrock()
+        access_bedrock = AccessBedrock(region_name=key_loader.get_bedrock_region(),
+                                       profile_name=key_loader.get_bedrock_profile())
         answer_generator = BedrockAnswerGenerator(model=model_, access_bedrock=access_bedrock)
     else:
         st.error("No LLM provider selected")

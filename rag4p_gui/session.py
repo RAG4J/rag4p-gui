@@ -78,8 +78,8 @@ def _init_llms():
             'llm': ['OpenAI', 'Ollama', 'Bedrock'],
             'model': [
                 [MODEL_GPT4O, MODEL_GPT4_TURBO, MODEL_GPT4, MODEL_GPT35_TURBO],
-                [MODEL_PHI3, MODEL_LLAMA3],
-                [MODEL_TITAN_EXPRESS]]
+                [MODEL_PHI3, MODEL_LLAMA3, "gemma2"],
+                [MODEL_TITAN_EXPRESS, "meta.llama3-70b-instruct-v1:0", "anthropic.claude-3-sonnet-20240229-v1:0"]]
         })
     if KEY_SELECTED_LLM_PROVIDER not in st.session_state:
         st.session_state[KEY_SELECTED_LLM_PROVIDER] = st.session_state[KEY_AVAILABLE_LLMS]['llm'].values[0]

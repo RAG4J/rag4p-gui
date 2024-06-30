@@ -1,6 +1,18 @@
 {
   "available": [
     {
+      "name": "Dev.to All",
+      "path": "dev_to",
+      "file": "all_dev_to.jsonl",
+      "reader": "DevToJsonlReader"
+    },
+    {
+      "name": "Dev.to Few",
+      "path": "dev_to",
+      "file": "few_dev_to.jsonl",
+      "reader": "DevToJsonlReader"
+    },
+    {
       "name": "Luminis Wordpress All",
       "path": "luminis_wp",
       "file": "all_luminis_wp.jsonl",

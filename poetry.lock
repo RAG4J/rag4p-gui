@@ -89,6 +89,27 @@ files = [
 cryptography = "*"
 
 [[package]]
+name = "beautifulsoup4"
+version = "4.12.3"
+description = "Screen-scraping library"
+optional = false
+python-versions = ">=3.6.0"
+files = [
+    {file = "beautifulsoup4-4.12.3-py3-none-any.whl", hash = "sha256:b80878c9f40111313e55da8ba20bdba06d8fa3969fc68304167741bbf9e082ed"},
+    {file = "beautifulsoup4-4.12.3.tar.gz", hash = "sha256:74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051"},
+]
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+cchardet = ["cchardet"]
+chardet = ["chardet"]
+charset-normalizer = ["charset-normalizer"]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "blinker"
 version = "1.8.2"
 description = "Fast, simple object-to-object and broadcast signaling"
@@ -1722,13 +1743,13 @@ files = [
 
 [[package]]
 name = "rag4p"
-version = "0.8.5"
+version = "0.8.8"
 description = "This project I use a lot for workshops, it contains some utils for splitters, tokenizers, and a weaviate client that I reuse a lot"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "rag4p-0.8.5-py3-none-any.whl", hash = "sha256:a0ddd62d264752d7c9ef8241300eb83ae3e3fdefda924e6610d97752c1bbde9e"},
-    {file = "rag4p-0.8.5.tar.gz", hash = "sha256:3e0d5e5e1cdfd2d45de3b4bd30b7e6f02ee1ba2a6028afb8a4ad036942fa47b3"},
+    {file = "rag4p-0.8.8-py3-none-any.whl", hash = "sha256:d99a476e92fe824d2a7bcfb35825f3025d832ee32e625c0aa5daea01368695f4"},
+    {file = "rag4p-0.8.8.tar.gz", hash = "sha256:7d5f262152f8461a1f50f9663535b92818a07b8fcb3fb9f7ec93058461177ad3"},
 ]
 
 [package.dependencies]
@@ -2167,6 +2188,17 @@ python-versions = ">=3.7"
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
+]
+
+[[package]]
+name = "soupsieve"
+version = "2.5"
+description = "A modern CSS selector implementation for Beautiful Soup."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "soupsieve-2.5-py3-none-any.whl", hash = "sha256:eaa337ff55a1579b6549dc679565eac1e3d000563bcb1c8ab0d0fefbc0c2cdc7"},
+    {file = "soupsieve-2.5.tar.gz", hash = "sha256:5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690"},
 ]
 
 [[package]]
@@ -2617,4 +2649,4 @@ validators = "0.28.3"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "237350f3a6713c68801d39f2cee9238ff47273a551c8af89898f91308b974535"
+content-hash = "0e7e9858712c1ac586ad8845d943f77f000fb62975ad3de0844cba49b27bfa62"

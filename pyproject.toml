@@ -12,6 +12,7 @@ rag4p = "^0.8.0"
 streamlit-antd-components = "^0.3.2"
 scikit-learn = "^1.5.0"
 plotly = "^5.22.0"
+beautifulsoup4 = "^4.12.3"
 
 
 [tool.poetry.group.dev.dependencies]

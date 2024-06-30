@@ -27,6 +27,7 @@ def embed_document():
     text_to_embed = st.session_state.get('text_to_embed')
     embedding = embedder.embed(text=text_to_embed)
     result_container.write(f'Length of Embedding: {len(embedding)}')
+    return embedding
 
 
 def compute_embeddings(algorithm_params_, data_frame):
@@ -65,10 +66,27 @@ st.text_input(label='Text to embed', key='text_to_embed')
 result_container = st.container()
 
 if st.session_state.get('text_to_embed') is not None and len(st.session_state.get('text_to_embed')) > 0:
-    embed_document()
+    new_embedding = embed_document()
+
+st.subheader("Embeddings for current content store")
+create_content_store_selection()
+
+
+if "content_store" not in st.session_state:
+    st.info("No content store selected.")
+    st.stop()
 
 content_store = st.session_state.content_store
-vector_store = content_store.vector_store
+vector_store = content_store.vector_store.copy()
+vector_store["color"] = "Dataset"
+
+if st.session_state.get('text_to_embed') is not None and len(st.session_state.get('text_to_embed')) > 0:
+    # Assuming `new_row_data` is a dictionary containing your new row data
+    new_row_data = {'chunk_id': 'local_doc', 'chunk': 0, 'embedding': new_embedding, 'color': 'sample text'}
+
+    # Add a new row to the DataFrame
+    vector_store.loc[len(vector_store)] = new_row_data
+
 vector_size = len(vector_store.iloc[0]["embedding"])
 
 algorithm_params = {
@@ -87,11 +105,9 @@ fig_2d = px.scatter(
     x=0,
     y=1,
     hover_data=["chunk_id"],
-    color=None,
+    color="color",
 )
 
-st.subheader("Embeddings for current content store")
-create_content_store_selection()
 expander = st.expander("Show content store details")
 info_content_store(expander)
 with st.container():

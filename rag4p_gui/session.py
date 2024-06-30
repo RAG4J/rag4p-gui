@@ -3,11 +3,14 @@ import streamlit as st
 from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
-from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM, MODEL_PHI3, MODEL_LLAMA3
+from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM, MODEL_PHI3, MODEL_LLAMA3, \
+    MODEL_GEMMA2
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA, MODEL_GPT4O, MODEL_GPT4, MODEL_GPT4_TURBO, \
     MODEL_GPT35_TURBO
-from rag4p.integrations.bedrock import MODEL_TITAN_EXPRESS, EMBEDDING_MODEL_TITAN, EMBEDDING_MODEL_TITAN_V2
+from rag4p.integrations.bedrock import MODEL_TITAN_EXPRESS, EMBEDDING_MODEL_TITAN, EMBEDDING_MODEL_TITAN_V2, \
+    MODEL_ANTHROPIC_HAIKU, MODEL_ANTHROPIC_SONNET, EMBEDDING_MODEL_COHERE_ENG, EMBEDDING_MODEL_COHERE_MULTI, \
+    MODEL_LLAMA_70B
 from rag4p.integrations.bedrock.bedrock_embedder import BedrockEmbedder
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
@@ -60,8 +63,13 @@ def _init_embeddings():
         st.session_state.available_embedders = pd.DataFrame({
             'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), BedrockEmbedder.supplier(),
                          OnnxEmbedder.supplier()],
-            'model': [[EMBEDDING_SMALL, EMBEDDING_ADA], [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM],
-                      [EMBEDDING_MODEL_TITAN_V2, EMBEDDING_MODEL_TITAN], ['MiniLM']]
+            'model': [
+                [EMBEDDING_SMALL, EMBEDDING_ADA],
+                [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM],
+                [EMBEDDING_MODEL_COHERE_ENG, EMBEDDING_MODEL_COHERE_MULTI, EMBEDDING_MODEL_TITAN_V2,
+                 EMBEDDING_MODEL_TITAN],
+                ['MiniLM']
+            ]
         })
     if KEY_SELECTED_EMBEDDER not in st.session_state:
         st.session_state[KEY_SELECTED_EMBEDDER] = st.session_state.available_embedders['embedder'].values[0]
@@ -78,8 +86,8 @@ def _init_llms():
             'llm': ['OpenAI', 'Ollama', 'Bedrock'],
             'model': [
                 [MODEL_GPT4O, MODEL_GPT4_TURBO, MODEL_GPT4, MODEL_GPT35_TURBO],
-                [MODEL_PHI3, MODEL_LLAMA3, "gemma2"],
-                [MODEL_TITAN_EXPRESS, "meta.llama3-70b-instruct-v1:0", "anthropic.claude-3-sonnet-20240229-v1:0"]]
+                [MODEL_PHI3, MODEL_LLAMA3, MODEL_GEMMA2],
+                [MODEL_ANTHROPIC_HAIKU, MODEL_ANTHROPIC_SONNET, MODEL_TITAN_EXPRESS, MODEL_LLAMA3]]
         })
     if KEY_SELECTED_LLM_PROVIDER not in st.session_state:
         st.session_state[KEY_SELECTED_LLM_PROVIDER] = st.session_state[KEY_AVAILABLE_LLMS]['llm'].values[0]

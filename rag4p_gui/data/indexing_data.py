@@ -9,7 +9,8 @@ from rag4p_gui.data.content_store_metadata import ContentStoreMetadata
 from rag4p_gui.data.content_store_metadata_service import ContentStoreMetadataService
 from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
-from rag4p_gui.integrations.weaviate import luminis, teqnation
+from rag4p_gui.data.readers.dev_to_jsonl_reader import DevToJsonlReader
+from rag4p_gui.integrations.weaviate import luminis, teqnation, dev_to
 from rag4p_gui.util.embedding import create_embedder
 from rag4p_gui.util.splitter import create_splitter
 
@@ -83,6 +84,9 @@ class IndexingData(ABC):
         elif dataset['reader'] == TeqnationJsonlReader.__name__:
             reader = TeqnationJsonlReader(file_name=data_path)
             additional_properties = teqnation.additional_properties
+        elif dataset['reader'] == DevToJsonlReader.__name__:
+            reader = DevToJsonlReader(file_name=data_path)
+            additional_properties = dev_to.additional_properties
         else:
             raise ValueError(f"Unknown reader {dataset['reader']}")
 

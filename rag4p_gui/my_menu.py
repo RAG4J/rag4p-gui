@@ -33,7 +33,7 @@ def show_menu_indexing():
 
 
 def show_menu_prompting():
-    page1, page2, page3 = st.columns(3, gap="small")
+    page1, page2, page3, page4 = st.columns(4, gap="small")
     with page1:
         st.page_link(page="home.py", label="Home", icon="🏠", help="Go back to the home page")
 
@@ -42,5 +42,8 @@ def show_menu_prompting():
 
     with page3:
         st.page_link(page="pages/31_prompting.py", label="Prompting", help="Learning about prompting")
+
+    with page4:
+        st.page_link(page="pages/32_chat.py", label="Chat", help="Learning about chatting")
 
     sac.divider(label="Generating")

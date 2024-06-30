@@ -15,11 +15,12 @@ from rag4p_gui.containers import info_content_store
 from rag4p_gui.data.data_sets import load_internal_content_store, available_data_files
 from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
+from rag4p_gui.data.readers.dev_to_jsonl_reader import DevToJsonlReader
 from rag4p_gui.indexing_sidebar import add_indexing_sidebar
 from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
 from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 from rag4p_gui.integrations.opensearch.opensearch_indexing_data import OpenSearchIndexingData
-from rag4p_gui.integrations.weaviate import luminis, teqnation
+from rag4p_gui.integrations.weaviate import luminis, teqnation, dev_to
 from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
 from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
 from rag4p_gui.integrations.weaviate.weviate_indexing_data import WeaviateIndexingData
@@ -72,6 +73,9 @@ def _create_reader(dataset):
     elif dataset['reader'] == TeqnationJsonlReader.__name__:
         reader = TeqnationJsonlReader(file_name=data_path)
         additional_properties = teqnation.additional_properties
+    elif dataset['reader'] == DevToJsonlReader.__name__:
+        reader = DevToJsonlReader(file_name=data_path)
+        additional_properties = dev_to.additional_properties
     else:
         raise ValueError(f"Unknown reader {dataset['reader']}")
     return reader, additional_properties

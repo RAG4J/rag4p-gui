@@ -23,6 +23,14 @@ class TeqnationComponentTemplate(ComponentTemplate):
                          embedding_dimension=embedding_dimension)
 
 
+class DevToComponentTemplate(ComponentTemplate):
+    def __init__(self, name: str, index_name: str, embedding_dimension: int):
+        version = 1
+        component_names = ["common_settings", "dev_to_mappings", "common_dynamic_mappings"]
+        super().__init__(name=name, version=version, index_name=index_name, component_names=component_names,
+                         embedding_dimension=embedding_dimension)
+
+
 class LuminisComponentMappings(ComponentMappings):
     def __init__(self):
         version = 2
@@ -74,6 +82,30 @@ class TeqnationComponentMappings(ComponentMappings):
         super().__init__(name=name, version=version, mappings=mappings)
 
 
+class DevToComponentMappings(ComponentMappings):
+    def __init__(self):
+        version = 1
+        name = "dev_to_mappings"
+        mappings = {
+            "title": {
+                "type": "text"
+            },
+            "author": {
+                "type": "text"
+            },
+            "published_at": {
+                "type": "date"
+            },
+            "url": {
+                "type": "keyword"
+            },
+            "tags": {
+                "type": "keyword"
+            }
+        }
+        super().__init__(name=name, version=version, mappings=mappings)
+
+
 def update_template(opensearch_client: OpenSearchClient, index_name: str, dataset: dict, embedding_dimension: int):
     if dataset["name"] in ["Luminis Wordpress All", "Luminis Wordpress Few"]:
         index_template = LuminisComponentTemplate(name=f"{index_name}_index_template",
@@ -85,6 +117,11 @@ def update_template(opensearch_client: OpenSearchClient, index_name: str, datase
                                                     index_name=index_name,
                                                     embedding_dimension=embedding_dimension)
         component_mappings = TeqnationComponentMappings()
+    elif dataset["name"] in ["Dev.to All", "Dev.to Few"]:
+        index_template = DevToComponentTemplate(name=f"{index_name}_index_template",
+                                                    index_name=index_name,
+                                                    embedding_dimension=embedding_dimension)
+        component_mappings = DevToComponentMappings()
     else:
         raise ValueError(f"Dataset {dataset['name']} is not supported.")
 

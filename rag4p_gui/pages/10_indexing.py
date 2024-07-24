@@ -139,11 +139,18 @@ create_content_store_selection()
 
 sac.divider(label="Manage collections in Weaviate and OpenSearch")
 
-weaviate_service = WeaviateContentStoreMetadataService(get_weaviate_access())
-opensearch_service = OpenSearchContentStoreMetadataService(get_opensearch_access())
 
 weaviate_container = st.container()
 opensearch_container = st.container()
 
-create_collection_manager(weaviate_container, weaviate_service, "Weaviate")
-create_collection_manager(opensearch_container, opensearch_service, "OpenSearch")
+try:
+    weaviate_service = WeaviateContentStoreMetadataService(get_weaviate_access())
+    create_collection_manager(weaviate_container, weaviate_service, "Weaviate")
+except Exception as e:
+    st.error(f"Could not connect to Weaviate: {e}")
+
+try:
+    opensearch_service = OpenSearchContentStoreMetadataService(get_opensearch_access())
+    create_collection_manager(opensearch_container, opensearch_service, "OpenSearch")
+except Exception as e:
+    st.error(f"Could not connect to OpenSearch: {e}")

@@ -31,7 +31,11 @@ def create_weaviate_collection_selection():
 
 
 def _obtain_collection_names():
-    service = WeaviateContentStoreMetadataService(get_weaviate_access())
+    try:
+        service = WeaviateContentStoreMetadataService(get_weaviate_access())
 
-    available_data = service.get_all_meta_data()
-    return [data.collection_name for data in available_data]
+        available_data = service.get_all_meta_data()
+        return [data.collection_name for data in available_data]
+    except Exception as e:
+        st.error(f"Could not connect to Weaviate: {e}")
+        return []

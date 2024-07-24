@@ -58,6 +58,7 @@ class WeaviateContentStoreMetadataService(ContentStoreMetadataService):
             self._meta_coll().data.insert(weaviate_doc)
 
     def init_collection(self, force: bool = False):
+
         exists = self.access_weaviate.does_collection_exist(META_DATA_COLLECTION_NAME)
         if exists and force:
             self.access_weaviate.delete_collection(META_DATA_COLLECTION_NAME)

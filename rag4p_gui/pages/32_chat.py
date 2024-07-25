@@ -25,7 +25,11 @@ with st.form("prompt-form", border=True):
 
     if submit_button:
         answer = chat_answer(prompt=the_prompt, key_loader=key_loader)
-
         st.write("Answer:")
 
-        st.write(answer)
+        if answer is None:
+            st.error("No answer generated")
+        elif "answer" in answer:
+            st.write(answer["answer"])
+        else:
+            st.write(answer)

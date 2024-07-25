@@ -9,11 +9,9 @@ from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.openai import EMBEDDING_SMALL, EMBEDDING_ADA, MODEL_GPT4O, MODEL_GPT4, MODEL_GPT4_TURBO, \
     MODEL_GPT35_TURBO
 from rag4p.integrations.bedrock import MODEL_TITAN_EXPRESS, EMBEDDING_MODEL_TITAN, EMBEDDING_MODEL_TITAN_V2, \
-    MODEL_ANTHROPIC_HAIKU, MODEL_ANTHROPIC_SONNET, EMBEDDING_MODEL_COHERE_ENG, EMBEDDING_MODEL_COHERE_MULTI, \
-    MODEL_LLAMA_70B
+    MODEL_ANTHROPIC_HAIKU, MODEL_ANTHROPIC_SONNET, EMBEDDING_MODEL_COHERE_ENG, EMBEDDING_MODEL_COHERE_MULTI
 from rag4p.integrations.bedrock.bedrock_embedder import BedrockEmbedder
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
-from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
 from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
 from rag4p.rag.retrieval.strategies.topn_retrieval_strategy import TopNRetrievalStrategy
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
@@ -61,14 +59,12 @@ def _init_splitters():
 def _init_embeddings():
     if KEY_AVAILABLE_EMBEDDERS not in st.session_state:
         st.session_state.available_embedders = pd.DataFrame({
-            'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), BedrockEmbedder.supplier(),
-                         OnnxEmbedder.supplier()],
+            'embedder': [OpenAIEmbedder.supplier(), OllamaEmbedder.supplier(), BedrockEmbedder.supplier()],
             'model': [
                 [EMBEDDING_SMALL, EMBEDDING_ADA],
                 [EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM],
                 [EMBEDDING_MODEL_COHERE_ENG, EMBEDDING_MODEL_COHERE_MULTI, EMBEDDING_MODEL_TITAN_V2,
-                 EMBEDDING_MODEL_TITAN],
-                ['MiniLM']
+                 EMBEDDING_MODEL_TITAN]
             ]
         })
     if KEY_SELECTED_EMBEDDER not in st.session_state:

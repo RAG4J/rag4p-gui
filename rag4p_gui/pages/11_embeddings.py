@@ -31,6 +31,13 @@ def embed_document():
 
 
 def compute_embeddings(algorithm_params_, data_frame):
+    print(data_frame.shape)
+    print(data_frame.columns)
+    embeddings = data_frame["embedding"].tolist()
+    for i, embedding in enumerate(embeddings):
+        if len(embedding) != algorithm_params_["dimensions"]:
+            data_frame = data_frame.drop(i)
+
     features = np.array(data_frame["embedding"].tolist())
 
     tsne = TSNE(

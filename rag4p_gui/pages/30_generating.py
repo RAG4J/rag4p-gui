@@ -15,12 +15,12 @@ load_dotenv()
 key_loader = KeyLoader()
 
 
-def retrieve_chunks_with_strategy(query: str):
+def retrieve_chunks_with_strategy(query_: str):
     if KEY_RETRIEVAL_STRATEGY not in st.session_state:
         st.error("No retrieval strategy selected")
         return
     strategy = st.session_state[KEY_RETRIEVAL_STRATEGY]
-    return strategy.retrieve_max_results(query, st.session_state[KEY_AMOUNT_OF_CHUNKS])
+    return strategy.retrieve_max_results(query_, st.session_state[KEY_AMOUNT_OF_CHUNKS])
 
 
 st.set_page_config(page_title='RAG4P GUI ~ Generating', page_icon='🧠', layout='wide')

@@ -2,6 +2,7 @@ import streamlit as st
 
 from rag4p.util.key_loader import KeyLoader
 from rag4p.integrations.opensearch.opensearch_client import OpenSearchClient
+from rag4p_gui.integrations.opensearch import ENABLE_OPENSEARCH_KEY
 from rag4p.integrations.opensearch.connection_builder import build_aws_search_service
 
 
@@ -17,6 +18,9 @@ def get_opensearch_access():
     except Exception as e:
         raise NoAwsSessionError(f"Could not connect to OpenSearch '{e}'")
 
+
+def enable_opensearch(key_loader: KeyLoader = KeyLoader()):
+    return key_loader.get_property(ENABLE_OPENSEARCH_KEY) == 'True'
 
 class NoAwsSessionError(Exception):
     pass

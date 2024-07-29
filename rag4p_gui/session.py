@@ -3,6 +3,9 @@ import streamlit as st
 from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
+from rag4p.indexing.splitters.section_splitter import SectionSplitter
+from rag4p.indexing.splitters.semantic_splitter import SemanticSplitter
+from rag4p.indexing.splitter_chain import SplitterChain
 from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC, EMBEDDING_MODEL_MINILM, MODEL_PHI3, MODEL_LLAMA3, \
     MODEL_GEMMA2
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
@@ -23,6 +26,7 @@ from rag4p_gui.components.select_number_of_chunks import KEY_AMOUNT_OF_CHUNKS
 from rag4p_gui.components.select_retriever import KEY_HYBRID_SEARCH
 from rag4p_gui.components.select_splitter import KEY_AVAILABLE_SPLITTERS, KEY_SELECTED_SPLITTER, KEY_CHUNK_SIZE
 from rag4p_gui.components.select_strategy import KEY_AVAILABLE_STRATEGIES
+from rag4p_gui.util import SECTION_SEMANTIC_OLLAMA_SPLITTER, SECTION_SEMANTIC_OPENAI_SPLITTER
 
 
 def init_session():
@@ -48,7 +52,8 @@ def init_session():
 def _init_splitters():
     if KEY_AVAILABLE_SPLITTERS not in st.session_state:
         st.session_state[KEY_AVAILABLE_SPLITTERS] = \
-            [SentenceSplitter.name(), MaxTokenSplitter.name(), SingleChunkSplitter.name()]
+            [SentenceSplitter.name(), MaxTokenSplitter.name(), SingleChunkSplitter.name(), SectionSplitter.name(),
+             SemanticSplitter.name(), SECTION_SEMANTIC_OLLAMA_SPLITTER, SECTION_SEMANTIC_OPENAI_SPLITTER]
     if KEY_SELECTED_SPLITTER not in st.session_state:
         st.session_state[KEY_SELECTED_SPLITTER] = st.session_state[KEY_AVAILABLE_SPLITTERS][0]
 

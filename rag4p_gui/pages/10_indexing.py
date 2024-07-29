@@ -17,11 +17,11 @@ from rag4p_gui.data.readers.teqnation_jsonl_reader import TeqnationJsonlReader
 from rag4p_gui.data.readers.wordpress_jsonl_reader import WordpressJsonlReader
 from rag4p_gui.data.readers.dev_to_jsonl_reader import DevToJsonlReader
 from rag4p_gui.indexing_sidebar import add_indexing_sidebar
-from rag4p_gui.integrations.opensearch.connect import get_opensearch_access
+from rag4p_gui.integrations.opensearch.connect import get_opensearch_access, enable_opensearch
 from rag4p_gui.integrations.opensearch.indexing import OpenSearchContentStoreMetadataService
 from rag4p_gui.integrations.opensearch.opensearch_indexing_data import OpenSearchIndexingData
 from rag4p_gui.integrations.weaviate import luminis, teqnation, dev_to
-from rag4p_gui.integrations.weaviate.connect import get_weaviate_access
+from rag4p_gui.integrations.weaviate.connect import get_weaviate_access, enable_weaviate
 from rag4p_gui.integrations.weaviate.indexing import WeaviateContentStoreMetadataService
 from rag4p_gui.integrations.weaviate.weviate_indexing_data import WeaviateIndexingData
 from rag4p_gui.my_menu import show_menu_indexing
@@ -109,9 +109,9 @@ with column1:
 
 with column2:
     st.text_input("Enter a new collection name", key="new_collection_name")
-    if st.button("Initialize Weaviate Content Store"):
+    if st.button("Initialize Weaviate Content Store", disabled=not enable_weaviate(key_loader)):
         asyncio.run(initialize_weaviate_content_store())
-    if st.button("Initialize OpenSearch Content Store"):
+    if st.button("Initialize OpenSearch Content Store", disabled=not enable_opensearch(key_loader)):
         asyncio.run(initialize_opensearch_content_store())
 
 result_container = st.container()
@@ -142,15 +142,20 @@ sac.divider(label="Manage collections in Weaviate and OpenSearch")
 
 weaviate_container = st.container()
 opensearch_container = st.container()
+if enable_weaviate(key_loader):
+    try:
+        weaviate_service = WeaviateContentStoreMetadataService(get_weaviate_access())
+        create_collection_manager(weaviate_container, weaviate_service, "Weaviate")
+    except Exception as e:
+        st.error(f"Could not connect to Weaviate: {e}")
+else:
+    st.info("Weaviate is not enabled")
 
-try:
-    weaviate_service = WeaviateContentStoreMetadataService(get_weaviate_access())
-    create_collection_manager(weaviate_container, weaviate_service, "Weaviate")
-except Exception as e:
-    st.error(f"Could not connect to Weaviate: {e}")
-
-try:
-    opensearch_service = OpenSearchContentStoreMetadataService(get_opensearch_access())
-    create_collection_manager(opensearch_container, opensearch_service, "OpenSearch")
-except Exception as e:
-    st.error(f"Could not connect to OpenSearch: {e}")
+if enable_opensearch(key_loader):
+    try:
+        opensearch_service = OpenSearchContentStoreMetadataService(get_opensearch_access())
+        create_collection_manager(opensearch_container, opensearch_service, "OpenSearch")
+    except Exception as e:
+        st.error(f"Could not connect to OpenSearch: {e}")
+else:
+    st.info("OpenSearch is not enabled")

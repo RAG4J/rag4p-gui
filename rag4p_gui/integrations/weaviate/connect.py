@@ -2,6 +2,7 @@ import streamlit as st
 
 
 from rag4p.integrations.weaviate.access_weaviate import AccessWeaviate
+from rag4p_gui.integrations.weaviate import ENABLE_WEAVIATE_KEY
 from rag4p.util.key_loader import KeyLoader
 
 
@@ -13,3 +14,7 @@ def get_weaviate_access():
                                      openai_api_key=key_loader.get_openai_api_key())
 
     return access_weaviate
+
+
+def enable_weaviate(key_loader: KeyLoader = KeyLoader()):
+    return key_loader.get_property(ENABLE_WEAVIATE_KEY) == 'True'

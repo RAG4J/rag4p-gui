@@ -68,6 +68,4 @@ with col2:
                  "possible to use. Head to the documentation page to learn more about the framework.")
         st.markdown("[https://rag4p.org](https://rag4p.org)")
 
-st.page_link(page="pages/32_chat.py", label="Chat", help="Chatting with an LLM")
-
 footer()

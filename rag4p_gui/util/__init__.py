@@ -1,0 +1,2 @@
+SECTION_SEMANTIC_OLLAMA_SPLITTER = 'SectionSemanticOllamaSplitter'
+SECTION_SEMANTIC_OPENAI_SPLITTER = 'SectionSemanticOpenAISplitter'

@@ -70,4 +70,20 @@ Every time I get the chance, I like to write articles that are geared towards en
 
 
 
+## Txt for splitter tutorial
+It all started with Halloween. I wanted something special for the kids walking past my house. I created a talking skeleton, just like the Pirates of the Caribbean. I want the kids to have a safe conversation with the pirate, which was challenging for some details.  
+  
+In this talk, we will guide you through the interactive steps of creating the talking head. We'll delve into the interface with a Large Language Model, the implementation of guard rules, and the intriguing problem of a pirate conversing within these rules. To kickstart the conversation, we'll connect the program to a motion detector, allowing the pirate to interact with kids in their native language-a, a truly multi-lingual experience. 
+ 
+Along the way, we will focus on problems like response time and content moderation, which can be quite difficult when the skeleton itself is already moderated. 
+Our goal is to inspire more creatives to discover the joy of programming and apply their skills to a wide range of educational and entertainment projects. The talking skeleton is just one example of how programming can create engaging and interactive experiences. 
+ 
+Technologies used: 
 
+
+Open AI: Large Language Model, Chat, speech-to-text 
+ElevenLabs: tekst-to-speech the pirate way 
+Python: Glue between the different components 
+Vue/Typescript: A frontend application to alternatively interact with the animatronic 
+ 
+Guest appearance: Benno the Pirate! 

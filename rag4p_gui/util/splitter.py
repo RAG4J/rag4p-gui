@@ -43,7 +43,7 @@ def create_splitter(splitter_name: str, **kwargs):
     elif splitter_name == SemanticSplitter.name():
         openai_api_key = key_loader.get_openai_api_key()
         knowledge_extractor = OpenaiKnowledgeExtractor(openai_api_key=openai_api_key)
-        splitter = SplitterChain([SectionSplitter(), SemanticSplitter(knowledge_extractor=knowledge_extractor)])
+        splitter = SemanticSplitter(knowledge_extractor=knowledge_extractor)
     elif splitter_name == SECTION_SEMANTIC_OLLAMA_SPLITTER:
         assess_ollama = AccessOllama()
         knowledge_extractor = OllamaKnowledgeExtractor(access_ollama=assess_ollama)

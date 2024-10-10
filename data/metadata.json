@@ -1,6 +1,12 @@
 {
   "available": [
     {
+      "name": "JFall All",
+      "path": "jfall",
+      "file": "all_sessions.jsonl",
+      "reader": "JFallJsonlReader"
+    },
+    {
       "name": "Dev.to All",
       "path": "dev_to",
       "file": "all_dev_to.jsonl",
